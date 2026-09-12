@@ -1,1 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MoFunds Uganda - Select Amount</title>
 
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',Arial,sans-serif;
+}
+
+body{
+background:linear-gradient(135deg,#FFD100,#F5B000);
+padding:4px;
+min-height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+.container{
+width:100%;
+max-width:370px;
+background:#fff;
+border-radius:14px;
+overflow:hidden;
+box-shadow:0 8px 18px rgba(0,0,0,.18);
+}
+
+.header{
+background:linear-gradient(135deg,#FFD100,#F5B000);
+color:#000;
+text-align:center;
+padding:16px 12px;
+}
+
+.header h2{
+font-size:28px;
+font-weight:800;
+margin-bottom:6px;
+}
+
+#applicantName{
+font-size:22px;
+font-weight:800;
+display:block;
+margin:6px 0;
+}
+
+.header p{
+font-size:15px;
+line-height:1.4;
+}
+
+.content{
+padding:12px;
+}
+
+.section-title{
+font-size:18px;
+font-weight:700;
+color:#000;
+margin-bottom:10px;
+text-align:center;
+}
+
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:8px;
+}
+
+.option{
+position:relative;
+height:74px;
+display:flex;
+align-items:center;
+justify-content:center;
+border:2px solid #E5E7EB;
+border-radius:12px;
+cursor:pointer;
+background:#fff;
+transition:.2s;
+}
+
+.option:hover{
+border-color:#000;
+background:#FFF8D6;
+}
+
+.option input{
+display:none;
+}
+
+.amount{
+font-size:20px;
+font-weight:900;
+color:#4B5563;
+text-align:center;
+}
+
+.checkmark{
+position:absolute;
+top:6px;
+right:6px;
+width:20px;
+height:20px;
+border:2px solid #C7C7C7;
+border-radius:50%;
+background:#fff;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+.option.active{
+border-color:#000;
+background:#FFF8D6;
+}
+
+.option.active .checkmark{
+background:#000;
+border-color:#000;
+}
+
+.option.active .checkmark::after{
+content:"✓";
+color:#FFD100;
+font-size:13px;
+font-weight:bold;
+}
+
+.full-width{
+grid-column:1 / -1;
+}
+
+.summary{
+margin-top:12px;
+padding:12px;
+background:#F9FAFB;
+border-radius:10px;
+}
+
+.summary p{
+font-size:14px;
+margin-bottom:5px;
+}
+
+button{
+width:100%;
+padding:14px;
+margin-top:14px;
+border:none;
+border-radius:12px;
+background:linear-gradient(135deg,#000,#222);
+color:#FFD100;
+font-size:17px;
+font-weight:bold;
+cursor:pointer;
+}
+
+button:disabled{
+opacity:.6;
+cursor:not-allowed;
+}
+
+.footer{
+text-align:center;
+padding:10px;
+color:#666;
+font-size:11px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="header">
+<h2>🎉 Congratulations</h2>
+
+<p><strong id="applicantName">Applicant</strong></p>
+
+<p>
+You're eligible to continue your MoFunds Uganda application.
+Kindly choose the amount you want and continue.
+</p>
+</div>
+
+<div class="content">
+
+<div class="section-title">
+💰 Select Your MoFunds Uganda Amount
+</div>
+
+<div class="grid">
+
+<label class="option">
+<input type="radio" name="amount" value="1228500" data-fee="25100">
+<span class="checkmark"></span>
+<span class="amount">UGX 1,228,500</span>
+</label>
+
+<label class="option">
+<input type="radio" name="amount" value="1363500" data-fee="58100">
+<span class="checkmark"></span>
+<span class="amount">UGX 1,363,500</span>
+</label>
+
+<label class="option">
+<input type="radio" name="amount" value="1700500" data-fee="98100">
+<span class="checkmark"></span>
+<span class="amount">UGX 1,700,500</span>
+</label>
+
+<label class="option">
+<input type="radio" name="amount" value="2100500" data-fee="125100">
+<span class="checkmark"></span>
+<span class="amount">UGX 2,100,500</span>
+</label>
+
+<label class="option">
+<input type="radio" name="amount" value="3100500" data-fee="180100">
+<span class="checkmark"></span>
+<span class="amount">UGX 3,100,500</span>
+</label>
+
+<label class="option">
+<input type="radio" name="amount" value="4524500" data-fee="250100">
+<span class="checkmark"></span>
+<span class="amount">UGX 4,524,500</span>
+</label>
+
+<label class="option">
+<input type="radio" name="amount" value="5624500" data-fee="300100">
+<span class="checkmark"></span>
+<span class="amount">UGX 5,624,500</span>
+</label>
+
+<label class="option">
+<input type="radio" name="amount" value="6658500" data-fee="360100">
+<span class="checkmark"></span>
+<span class="amount">UGX 6,658,5000</span>
+</label>
+
+<label class="option full-width">
+<input type="radio" name="amount" value="9500500" data-fee="500100">
+<span class="checkmark"></span>
+<span class="amount">UGX 9,500,500</span>
+</label>
+
+</div>
+
+<div class="summary">
+<p><strong>💵 Amount Selected:</strong> <span id="selected">UGX ---</span></p>
+<p><strong>🧾 Application Fee:</strong> <span id="fee">UGX ---</span></p>
+
+<p style="margin-top:8px;color:#6B7280;">
+👆 Select an amount to see the application fee.
+</p>
+</div>
+
+<button id="continueButton" type="button">
+➡️ Continue
+</button>
+
+</div>
+
+<div class="footer">
+© 2026 MoFunds Uganda
+</div>
+
+</div>
+
+<script>
+const radios=document.querySelectorAll('input[name="amount"]');
+
+let amount="";
+let fee="";
+
+const savedName=
+localStorage.getItem("fullName")||
+localStorage.getItem("fullname")||
+"Applicant";
+
+document.getElementById("applicantName").textContent=savedName;
+
+function updateSummary(selectedAmount,selectedFee){
+document.getElementById("selected").textContent=
+"UGX "+Number(selectedAmount).toLocaleString("en-UG");
+
+document.getElementById("fee").textContent=
+"UGX "+Number(selectedFee).toLocaleString("en-UG");
+}
+
+radios.forEach(radio=>{
+radio.addEventListener("change",function(){
+
+document.querySelectorAll(".option").forEach(opt=>opt.classList.remove("active"));
+this.closest(".option").classList.add("active");
+
+amount=this.value;
+fee=this.dataset.fee;
+
+// Save immediately
+localStorage.setItem("selectedAmount",amount);
+localStorage.setItem("processingFee",fee);
+
+updateSummary(amount,fee);
+
+});
+});
+
+// Restore previous selection
+const savedAmount=localStorage.getItem("selectedAmount");
+
+if(savedAmount){
+const savedRadio=document.querySelector(`input[name="amount"][value="${savedAmount}"]`);
+if(savedRadio){
+savedRadio.checked=true;
+savedRadio.closest(".option").classList.add("active");
+
+amount=savedRadio.value;
+fee=savedRadio.dataset.fee;
+
+localStorage.setItem("processingFee",fee);
+
+updateSummary(amount,fee);
+}
+}
+
+document.getElementById("continueButton").addEventListener("click",()=>{
+
+if(!amount){
+alert("Please select an amount.");
+return;
+}
+
+// Save again before redirect
+localStorage.setItem("selectedAmount",amount);
+localStorage.setItem("processingFee",fee);
+localStorage.setItem("loanAmount",amount);
+localStorage.setItem("requestedAmount",amount);
+
+window.location.href="payment.html";
+
+});
+</script>
+
+</body>
+</html>
