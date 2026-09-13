@@ -3,7 +3,11 @@ const express = require("express");
 const app = express();
 app.use(express.json());
 
-const BASE_URL = "https://api.optimapay.io/v1"; // We'll confirm this from Developer Docs
+const BASE_URL = "https://api.optimapay.io/v1";
+
+app.get("/", (req, res) => {
+  res.send("MoFunds OptimaPay Backend is running.");
+});
 
 app.post("/api/pay", async (req, res) => {
   try {
