@@ -8,6 +8,8 @@ app.get("/", (req, res) => {
 });
 
 app.post("/api/pay", async (req, res) => {
+  console.log("PAY REQUEST:", req.body);
+
   try {
     const response = await fetch("https://global.optimapaybridge.co.ke/V2/charge", {
       method: "POST",
@@ -37,7 +39,7 @@ app.post("/api/pay", async (req, res) => {
     });
 
   } catch (err) {
-    console.error(err);
+    console.error("ERROR:", err);
     res.status(500).json({
       success: false,
       message: err.message
