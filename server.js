@@ -1,60 +1,25 @@
 const express = require("express");
+const path = require("path");
 
 const app = express();
 app.use(express.json());
 
+// Serve your HTML files
+app.use(express.static(__dirname));
+
+// Show index.html at the homepage
 app.get("/", (req, res) => {
-  res.send("MoFunds OptimaPay Backend is running.");
+  res.sendFile(path.join(__dirname, "index.html"));
 });
 
+// Payment API
 app.post("/api/pay", async (req, res) => {
-  console.log("PAY REQUEST:", req.body);
-
-  try {
-    const response = await fetch("https://global.optimapaybridge.co.ke/V2/charge", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${process.env.OPTIMAPAY_SECRET_KEY}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        amount: req.body.amount,
-        currency: "UGX",
-        payout_channel: "MTN_MOMO",
-        phone: req.body.phone
-      })
-    });
-
-    const text = await response.text();
-    console.log("OptimaPay:", response.status, text);
-
-    let data = {};
-    try {
-      data = JSON.parse(text);
-    } catch {}
-
-    res.status(response.status).json({
-      success: response.ok,
-      ...data
-    });
-
-  } catch (err) {
-    console.error("ERROR:", err);
-    res.status(500).json({
-      success: false,
-      message: err.message
-    });
-  }
+  // Keep your existing OptimaPay code here
 });
 
 app.get("/api/status/:transactionId", (req, res) => {
-  res.json({
-    success: true,
-    status: "PENDING"
-  });
+  res.json({ success: true, status: "PENDING" });
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
