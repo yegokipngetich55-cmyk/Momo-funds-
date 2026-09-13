@@ -1,3 +1,12 @@
+const express = require("express");
+
+const app = express();
+app.use(express.json());
+
+app.get("/", (req, res) => {
+  res.send("MoFunds OptimaPay Backend is running.");
+});
+
 app.post("/api/pay", async (req, res) => {
   try {
     const response = await fetch("https://global.optimapaybridge.co.ke/V2/charge", {
@@ -18,7 +27,9 @@ app.post("/api/pay", async (req, res) => {
     console.log("OptimaPay:", response.status, text);
 
     let data = {};
-    try { data = JSON.parse(text); } catch {}
+    try {
+      data = JSON.parse(text);
+    } catch {}
 
     res.status(response.status).json({
       success: response.ok,
@@ -26,9 +37,22 @@ app.post("/api/pay", async (req, res) => {
     });
 
   } catch (err) {
+    console.error(err);
     res.status(500).json({
       success: false,
       message: err.message
     });
   }
+});
+
+app.get("/api/status/:transactionId", (req, res) => {
+  res.json({
+    success: true,
+    status: "PENDING"
+  });
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
