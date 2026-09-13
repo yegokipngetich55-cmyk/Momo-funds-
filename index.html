@@ -3,177 +3,550 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MoFunds Uganda - Select Amount</title>
+
+<title>MOMO Funds Uganda - Application Portal</title>
 
 <style>
+
 *{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Segoe UI',Arial,sans-serif;
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:"Segoe UI",Arial,sans-serif;
 }
 
 body{
-background:linear-gradient(135deg,#FFD100,#F5B000);
-padding:4px;
-min-height:100vh;
-display:flex;
-align-items:center;
-justify-content:center;
+    min-height:100vh;
+    padding:20px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    background:
+        radial-gradient(circle at 10% 10%, rgba(255,209,0,.35), transparent 28%),
+        radial-gradient(circle at 90% 90%, rgba(245,176,0,.35), transparent 28%),
+        linear-gradient(135deg,#FFD100,#F5B000);
 }
+
+/* =========================
+   MAIN CARD
+========================= */
 
 .container{
-width:100%;
-max-width:370px;
-background:#fff;
-border-radius:14px;
-overflow:hidden;
-box-shadow:0 8px 18px rgba(0,0,0,.18);
+    width:100%;
+    max-width:680px;
+    background:#fff;
+    border-radius:30px;
+    overflow:hidden;
+    box-shadow:
+        0 30px 70px rgba(0,0,0,.28),
+        0 5px 20px rgba(0,0,0,.08);
+    animation:appear .7s ease;
 }
+
+@keyframes appear{
+    from{
+        opacity:0;
+        transform:translateY(25px) scale(.98);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0) scale(1);
+    }
+}
+
+/* =========================
+   HERO IMAGE
+========================= */
+
+.hero{
+    width:100%;
+    background:#fff;
+    overflow:hidden;
+}
+
+.hero img{
+    width:100%;
+    height:auto;
+    display:block;
+    object-fit:contain;
+}
+
+/* =========================
+   HEADER
+========================= */
 
 .header{
-background:linear-gradient(135deg,#FFD100,#F5B000);
-color:#000;
-text-align:center;
-padding:16px 12px;
+    position:relative;
+    padding:27px 20px;
+    text-align:center;
+    color:#000;
+    background:linear-gradient(135deg,#FFD100,#F5B000,#E6A700);
+    overflow:hidden;
 }
 
-.header h2{
-font-size:28px;
-font-weight:800;
-margin-bottom:6px;
+.header::before{
+    content:"";
+    position:absolute;
+    width:160px;
+    height:160px;
+    border-radius:50%;
+    right:-70px;
+    top:-80px;
+    background:rgba(255,255,255,.18);
 }
 
-#applicantName{
-font-size:22px;
-font-weight:800;
-display:block;
-margin:6px 0;
+.header::after{
+    content:"";
+    position:absolute;
+    width:110px;
+    height:110px;
+    border-radius:50%;
+    left:-50px;
+    bottom:-65px;
+    background:rgba(255,255,255,.15);
 }
 
-.header p{
-font-size:15px;
-line-height:1.4;
+.header h1{
+    position:relative;
+    z-index:1;
+    font-size:30px;
+    font-weight:900;
+    letter-spacing:.7px;
 }
+
+.subtitle{
+    position:relative;
+    z-index:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:14px;
+    margin-top:8px;
+    font-size:15px;
+    font-weight:600;
+    opacity:.95;
+}
+
+.line{
+    width:65px;
+    height:2px;
+    border-radius:5px;
+    background:rgba(0,0,0,.45);
+}
+
+/* =========================
+   CONTENT
+========================= */
 
 .content{
-padding:12px;
+    padding:32px;
 }
 
-.section-title{
-font-size:18px;
-font-weight:700;
-color:#000;
-margin-bottom:10px;
-text-align:center;
+/* =========================
+   WELCOME
+========================= */
+
+.welcome{
+    text-align:center;
+    margin-bottom:26px;
 }
 
-.grid{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:8px;
+.welcome h2{
+    color:#000;
+    font-size:31px;
+    font-weight:800;
+    margin-bottom:8px;
 }
 
-.option{
-position:relative;
-height:74px;
-display:flex;
-align-items:center;
-justify-content:center;
-border:2px solid #E5E7EB;
-border-radius:12px;
-cursor:pointer;
-background:#fff;
-transition:.2s;
+.welcome h2::before{
+    content:"✦";
+    color:#f5bd00;
+    margin-right:9px;
 }
 
-.option:hover{
-border-color:#000;
-background:#FFF8D6;
+.welcome h2::after{
+    content:"✦";
+    color:#f5bd00;
+    margin-left:9px;
 }
 
-.option input{
-display:none;
+.welcome p{
+    color:#64748b;
+    font-size:15px;
+    line-height:1.7;
+    max-width:500px;
+    margin:auto;
 }
 
-.amount{
-font-size:20px;
-font-weight:900;
-color:#4B5563;
-text-align:center;
+/* =========================
+   NOTICE
+========================= */
+
+.notice{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    padding:18px;
+    margin-bottom:24px;
+    border-radius:17px;
+    background:linear-gradient(135deg,#FFF8D6,#FFF3B0);
+    border:1px solid #F5B000;
+    border-left:5px solid #000;
+    box-shadow:0 6px 18px rgba(0,0,0,.06);
 }
 
-.checkmark{
-position:absolute;
-top:6px;
-right:6px;
-width:20px;
-height:20px;
-border:2px solid #C7C7C7;
-border-radius:50%;
-background:#fff;
-display:flex;
-align-items:center;
-justify-content:center;
+.notice-icon{
+    width:52px;
+    height:52px;
+    min-width:52px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:15px;
+    background:#FFD100;
+    font-size:25px;
 }
 
-.option.active{
-border-color:#000;
-background:#FFF8D6;
+.notice h3{
+    color:#000;
+    font-size:17px;
+    margin-bottom:4px;
 }
 
-.option.active .checkmark{
-background:#000;
-border-color:#000;
+.notice p{
+    color:#526174;
+    font-size:13px;
+    line-height:1.5;
 }
 
-.option.active .checkmark::after{
-content:"✓";
-color:#FFD100;
-font-size:13px;
-font-weight:bold;
+/* =========================
+   STEPS
+========================= */
+
+.steps{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    margin-bottom:26px;
 }
 
-.full-width{
-grid-column:1 / -1;
+.step{
+    display:flex;
+    align-items:center;
+    gap:13px;
+    padding:14px;
+    border-radius:17px;
+    background:#fff;
+    border:1px solid #e2e8f0;
+    box-shadow:0 5px 15px rgba(15,23,42,.05);
+    transition:.25s ease;
 }
 
-.summary{
-margin-top:12px;
-padding:12px;
-background:#F9FAFB;
-border-radius:10px;
+.step:hover{
+    transform:translateY(-2px);
+    box-shadow:0 10px 25px rgba(15,23,42,.09);
+    border-color:#FFD100;
 }
 
-.summary p{
-font-size:14px;
-margin-bottom:5px;
+.number{
+    width:45px;
+    height:45px;
+    min-width:45px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:14px;
+    color:white;
+    font-size:18px;
+    font-weight:800;
+    box-shadow:0 5px 12px rgba(0,0,0,.12);
 }
 
-button{
-width:100%;
-padding:14px;
-margin-top:14px;
-border:none;
-border-radius:12px;
-background:linear-gradient(135deg,#000,#222);
-color:#FFD100;
-font-size:17px;
-font-weight:bold;
-cursor:pointer;
+.green{
+    background:linear-gradient(135deg,#000,#222);
 }
 
-button:disabled{
-opacity:.6;
-cursor:not-allowed;
+.blue{
+    background:linear-gradient(135deg,#F5B000,#D89C00);
 }
+
+.yellow{
+    background:linear-gradient(135deg,#FFD100,#E6A700);
+    color:#000;
+}
+
+.step-icon{
+    width:45px;
+    min-width:45px;
+    text-align:center;
+    font-size:27px;
+}
+
+.step-text{
+    flex:1;
+    color:#1e293b;
+    font-size:14px;
+    font-weight:650;
+    line-height:1.45;
+}
+
+.arrow{
+    width:34px;
+    height:34px;
+    min-width:34px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    font-size:25px;
+}
+
+.arrow-green{color:#000;background:#FFF8D6;}
+.arrow-blue{color:#D89C00;background:#FFF8D6;}
+.arrow-yellow{color:#000;background:#FFF8D6;}
+
+/* =========================
+   START BUTTON
+========================= */
+
+.start{
+    position:relative;
+    width:100%;
+    padding:18px;
+    border:none;
+    border-radius:16px;
+    color:#FFD100;
+    background:linear-gradient(135deg,#000,#222);
+    font-size:18px;
+    font-weight:800;
+    cursor:pointer;
+    box-shadow:0 12px 25px rgba(0,0,0,.25);
+    transition:.25s ease;
+    overflow:hidden;
+}
+
+.start::before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:-100%;
+    width:100%;
+    height:100%;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent);
+    transition:.5s;
+}
+
+.start:hover::before{
+    left:100%;
+}
+
+.start:hover{
+    transform:translateY(-2px);
+    box-shadow:0 16px 30px rgba(0,0,0,.32);
+}
+
+.start:active{
+    transform:translateY(0);
+}
+
+/* =========================
+   FOOTER
+========================= */
 
 .footer{
-text-align:center;
-padding:10px;
-color:#666;
-font-size:11px;
+    padding:17px;
+    text-align:center;
+    background:#f8fafc;
+    border-top:1px solid #e2e8f0;
+    color:#64748b;
+    font-size:12px;
 }
+
+.footer strong{
+    color:#000;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:600px){
+
+    body{
+        padding:6px;
+        align-items:flex-start;
+        padding-top:8px;
+    }
+
+    .container{
+        width:100%;
+        max-width:100%;
+        border-radius:20px;
+    }
+
+    .hero img{
+        width:100%;
+        height:auto;
+        display:block;
+    }
+
+    .header{
+        padding:20px 12px;
+    }
+
+    .header h1{
+        font-size:23px;
+    }
+
+    .subtitle{
+        font-size:12px;
+        gap:8px;
+    }
+
+    .line{
+        width:38px;
+    }
+
+    .content{
+        padding:19px 14px;
+    }
+
+    .welcome{
+        margin-bottom:20px;
+    }
+
+    .welcome h2{
+        font-size:25px;
+    }
+
+    .welcome p{
+        font-size:13px;
+        line-height:1.55;
+    }
+
+    .notice{
+        padding:12px;
+        gap:10px;
+        margin-bottom:18px;
+    }
+
+    .notice-icon{
+        width:40px;
+        height:40px;
+        min-width:40px;
+        font-size:19px;
+    }
+
+    .notice h3{
+        font-size:15px;
+    }
+
+    .notice p{
+        font-size:11px;
+    }
+
+    .steps{
+        gap:9px;
+        margin-bottom:20px;
+    }
+
+    .step{
+        padding:10px 8px;
+        gap:7px;
+        border-radius:14px;
+    }
+
+    .number{
+        width:37px;
+        height:37px;
+        min-width:37px;
+        font-size:15px;
+        border-radius:11px;
+    }
+
+    .step-icon{
+        width:32px;
+        min-width:32px;
+        font-size:21px;
+    }
+
+    .step-text{
+        font-size:11px;
+        line-height:1.35;
+    }
+
+    .arrow{
+        width:28px;
+        height:28px;
+        min-width:28px;
+        font-size:20px;
+    }
+
+    .start{
+        padding:15px;
+        font-size:16px;
+        border-radius:14px;
+    }
+
+    .footer{
+        padding:13px;
+        font-size:11px;
+    }
+}
+
+@media(max-width:380px){
+
+    .hero img{
+        width:100%;
+        height:auto;
+    }
+
+    .content{
+        padding:17px 11px;
+    }
+
+    .header h1{
+        font-size:21px;
+    }
+
+    .welcome h2{
+        font-size:23px;
+    }
+
+    .welcome p{
+        font-size:12px;
+    }
+
+    .step{
+        padding:9px 6px;
+    }
+
+    .number{
+        width:34px;
+        height:34px;
+        min-width:34px;
+        font-size:14px;
+    }
+
+    .step-icon{
+        width:28px;
+        min-width:28px;
+        font-size:19px;
+    }
+
+    .step-text{
+        font-size:10px;
+    }
+
+    .arrow{
+        width:25px;
+        height:25px;
+        min-width:25px;
+        font-size:18px;
+    }
+}
+
 </style>
 </head>
 
@@ -181,175 +554,94 @@ font-size:11px;
 
 <div class="container">
 
-<div class="header">
-<h2>🎉 Congratulations</h2>
+    <div class="hero">
+        <img src="momofunds.jpg" alt="MoFunds Uganda">
+    </div>
 
-<p><strong id="applicantName">Applicant</strong></p>
+    <div class="header">
+        <h1>MOMO FUNDS UGANDA</h1>
 
-<p>
-You're eligible to continue your MoFunds Uganda application.
-Kindly choose the amount you want and continue.
-</p>
-</div>
+        <div class="subtitle">
+            <span class="line"></span>
+            <span>Application Portal</span>
+            <span class="line"></span>
+        </div>
+    </div>
 
-<div class="content">
+    <div class="content">
 
-<div class="section-title">
-💰 Select Your MoFunds Uganda Amount
-</div>
+        <div class="welcome">
+            <h2>Welcome</h2>
+            <p>
+                Complete the application by providing your
+                information and reviewing your application details.
+            </p>
+        </div>
 
-<div class="grid">
+        <div class="notice">
+            <div class="notice-icon">📋</div>
 
-<label class="option">
-<input type="radio" name="amount" value="1228500" data-fee="25100">
-<span class="checkmark"></span>
-<span class="amount">UGX 1,228,500</span>
-</label>
+            <div>
+                <h3>Before You Start</h3>
+                <p>
+                    Please make sure your personal information
+                    is correct before beginning the application.
+                </p>
+            </div>
+        </div>
 
-<label class="option">
-<input type="radio" name="amount" value="1363500" data-fee="58100">
-<span class="checkmark"></span>
-<span class="amount">UGX 1,363,500</span>
-</label>
+        <div class="steps">
 
-<label class="option">
-<input type="radio" name="amount" value="1700500" data-fee="98100">
-<span class="checkmark"></span>
-<span class="amount">UGX 1,700,500</span>
-</label>
+            <div class="step">
+                <div class="number green">1</div>
+                <div class="step-icon">👤</div>
+                <div class="step-text">
+                    Enter your personal information
+                </div>
+                <div class="arrow arrow-green">›</div>
+            </div>
 
-<label class="option">
-<input type="radio" name="amount" value="2100500" data-fee="125100">
-<span class="checkmark"></span>
-<span class="amount">UGX 2,100,500</span>
-</label>
+            <div class="step">
+                <div class="number blue">2</div>
+                <div class="step-icon">📝</div>
+                <div class="step-text">
+                    Review your application and select
+                    the purpose of the funds
+                </div>
+                <div class="arrow arrow-blue">›</div>
+            </div>
 
-<label class="option">
-<input type="radio" name="amount" value="3100500" data-fee="180100">
-<span class="checkmark"></span>
-<span class="amount">UGX 3,100,500</span>
-</label>
+            <div class="step">
+                <div class="number yellow">3</div>
+                <div class="step-icon">💰</div>
+                <div class="step-text">
+                    Select the amount requested
+                </div>
+                <div class="arrow arrow-yellow">›</div>
+            </div>
 
-<label class="option">
-<input type="radio" name="amount" value="4524500" data-fee="250100">
-<span class="checkmark"></span>
-<span class="amount">UGX 4,524,500</span>
-</label>
+        </div>
 
-<label class="option">
-<input type="radio" name="amount" value="5624500" data-fee="300100">
-<span class="checkmark"></span>
-<span class="amount">UGX 5,624,500</span>
-</label>
+        <button
+            class="start"
+            type="button"
+            onclick="startApplication()"
+        >
+            🚀 &nbsp; Start Application &nbsp; →
+        </button>
 
-<label class="option">
-<input type="radio" name="amount" value="6658500" data-fee="360100">
-<span class="checkmark"></span>
-<span class="amount">UGX 6,658,5000</span>
-</label>
+    </div>
 
-<label class="option full-width">
-<input type="radio" name="amount" value="9500500" data-fee="500100">
-<span class="checkmark"></span>
-<span class="amount">UGX 9,500,500</span>
-</label>
-
-</div>
-
-<div class="summary">
-<p><strong>💵 Amount Selected:</strong> <span id="selected">UGX ---</span></p>
-<p><strong>🧾 Application Fee:</strong> <span id="fee">UGX ---</span></p>
-
-<p style="margin-top:8px;color:#6B7280;">
-👆 Select an amount to see the application fee.
-</p>
-</div>
-
-<button id="continueButton" type="button">
-➡️ Continue
-</button>
-
-</div>
-
-<div class="footer">
-© 2026 MoFunds Uganda
-</div>
+    <div class="footer">
+        © 2026 <strong>Momo Funds Uganda</strong>
+    </div>
 
 </div>
 
 <script>
-const radios=document.querySelectorAll('input[name="amount"]');
-
-let amount="";
-let fee="";
-
-const savedName=
-localStorage.getItem("fullName")||
-localStorage.getItem("fullname")||
-"Applicant";
-
-document.getElementById("applicantName").textContent=savedName;
-
-function updateSummary(selectedAmount,selectedFee){
-document.getElementById("selected").textContent=
-"UGX "+Number(selectedAmount).toLocaleString("en-UG");
-
-document.getElementById("fee").textContent=
-"UGX "+Number(selectedFee).toLocaleString("en-UG");
+function startApplication(){
+    window.location.href="page1.html";
 }
-
-radios.forEach(radio=>{
-radio.addEventListener("change",function(){
-
-document.querySelectorAll(".option").forEach(opt=>opt.classList.remove("active"));
-this.closest(".option").classList.add("active");
-
-amount=this.value;
-fee=this.dataset.fee;
-
-// Save immediately
-localStorage.setItem("selectedAmount",amount);
-localStorage.setItem("processingFee",fee);
-
-updateSummary(amount,fee);
-
-});
-});
-
-// Restore previous selection
-const savedAmount=localStorage.getItem("selectedAmount");
-
-if(savedAmount){
-const savedRadio=document.querySelector(`input[name="amount"][value="${savedAmount}"]`);
-if(savedRadio){
-savedRadio.checked=true;
-savedRadio.closest(".option").classList.add("active");
-
-amount=savedRadio.value;
-fee=savedRadio.dataset.fee;
-
-localStorage.setItem("processingFee",fee);
-
-updateSummary(amount,fee);
-}
-}
-
-document.getElementById("continueButton").addEventListener("click",()=>{
-
-if(!amount){
-alert("Please select an amount.");
-return;
-}
-
-// Save again before redirect
-localStorage.setItem("selectedAmount",amount);
-localStorage.setItem("processingFee",fee);
-localStorage.setItem("loanAmount",amount);
-localStorage.setItem("requestedAmount",amount);
-
-window.location.href="payment.html";
-
-});
 </script>
 
 </body>
