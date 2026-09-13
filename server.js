@@ -1,17 +1,6 @@
-const express = require("express");
-
-const app = express();
-app.use(express.json());
-
-const BASE_URL = "https://api.optimapay.io/v1";
-
-app.get("/", (req, res) => {
-  res.send("MoFunds OptimaPay Backend is running.");
-});
-
 app.post("/api/pay", async (req, res) => {
   try {
-    const response = await fetch(`${BASE_URL}/payments`, {
+    const response = await fetch("https://global.optimapaybridge.co.ke/V2/charge", {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${process.env.OPTIMAPAY_SECRET_KEY}`,
@@ -20,34 +9,26 @@ app.post("/api/pay", async (req, res) => {
       body: JSON.stringify({
         amount: req.body.amount,
         currency: "UGX",
-        channel: "mtn_momo",
+        payout_channel: "MTN_MOMO",
         phone: req.body.phone
       })
     });
 
     const text = await response.text();
-    console.log("OptimaPay response:", response.status, text);
+    console.log("OptimaPay:", response.status, text);
 
     let data = {};
     try { data = JSON.parse(text); } catch {}
 
     res.status(response.status).json({
       success: response.ok,
-      ...data,
-      message: data.message || text
+      ...data
     });
 
   } catch (err) {
-    console.error(err);
     res.status(500).json({
       success: false,
       message: err.message
     });
   }
 });
-
-app.get("/api/status/:transactionId", (req, res) => {
-  res.json({ success: true, status: "PENDING" });
-});
-
-app.listen(process.env.PORT || 3000);
