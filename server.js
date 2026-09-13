@@ -20,15 +20,25 @@ app.post("/api/pay", async (req, res) => {
       body: JSON.stringify({
         amount: req.body.amount,
         currency: "UGX",
-        channel: req.body.channel,
+        channel: "mtn_momo",
         phone: req.body.phone
       })
     });
 
-    const data = await response.json();
-    res.json({ success: true, ...data });
+    const text = await response.text();
+    console.log("OptimaPay response:", response.status, text);
+
+    let data = {};
+    try { data = JSON.parse(text); } catch {}
+
+    res.status(response.status).json({
+      success: response.ok,
+      ...data,
+      message: data.message || text
+    });
 
   } catch (err) {
+    console.error(err);
     res.status(500).json({
       success: false,
       message: err.message
@@ -36,13 +46,8 @@ app.post("/api/pay", async (req, res) => {
   }
 });
 
-app.get("/api/status/:transactionId", async (req, res) => {
-  res.json({
-    success: true,
-    status: "PENDING"
-  });
+app.get("/api/status/:transactionId", (req, res) => {
+  res.json({ success: true, status: "PENDING" });
 });
 
-app.listen(process.env.PORT || 3000, () => {
-  console.log("Server running");
-});
+app.listen(process.env.PORT || 3000);
