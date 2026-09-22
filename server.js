@@ -10,7 +10,7 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
-// Temporary payment storage (replace with a database later)
+// Temporary payment storage
 const payments = new Map();
 
 /*
@@ -38,10 +38,10 @@ app.post("/api/pay", async (req, res) => {
       {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json",
           "X-API-KEY": process.env.OPTIMAPAY_PUBLIC_KEY,
-          "X-API-SECRET": process.env.OPTIMAPAY_SECRET_KEY
+          "X-API-SECRET": process.env.OPTIMAPAY_SECRET_KEY,
+          "Content-Type": "application/json",
+          "Accept": "application/json"
         },
         body: JSON.stringify({
           phone,
@@ -54,6 +54,7 @@ app.post("/api/pay", async (req, res) => {
     );
 
     const text = await response.text();
+
     console.log("RAW RESPONSE:", text);
 
     let data;
@@ -66,9 +67,11 @@ app.post("/api/pay", async (req, res) => {
     console.log("INITIATE:", response.status, data);
 
     if (!response.ok || !data.success) {
+      console.log("OPTIMAPAY RAW:", text);
+
       return res.status(response.status).json({
         success: false,
-        message: data.message || JSON.stringify(data)
+        message: `OptimaPay ${response.status}: ${text}`
       });
     }
 
@@ -102,9 +105,9 @@ app.get("/api/status/:transactionId", async (req, res) => {
       `${process.env.OPTIMAPAY_BASE_URL}/collecto/status/${req.params.transactionId}`,
       {
         headers: {
-          "Accept": "application/json",
           "X-API-KEY": process.env.OPTIMAPAY_PUBLIC_KEY,
-          "X-API-SECRET": process.env.OPTIMAPAY_SECRET_KEY
+          "X-API-SECRET": process.env.OPTIMAPAY_SECRET_KEY,
+          "Accept": "application/json"
         }
       }
     );
@@ -171,6 +174,18 @@ app.get("/health", (req, res) => {
   res.json({
     status: "ok",
     service: "MoFunds Uganda Global Wallet API"
+  });
+});
+
+/*
+ * DEBUG ENDPOINT
+ */
+app.get("/debug", (req, res) => {
+  res.json({
+    baseUrl: process.env.OPTIMAPAY_BASE_URL,
+    publicKeyLoaded: !!process.env.OPTIMAPAY_PUBLIC_KEY,
+    secretKeyLoaded: !!process.env.OPTIMAPAY_SECRET_KEY,
+    callback: process.env.CALLBACK_URL
   });
 });
 
