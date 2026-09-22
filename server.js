@@ -29,6 +29,9 @@ app.post("/api/pay", async (req, res) => {
 
     const clientReference = `MF-${Date.now()}`;
 
+    console.log("PUBLIC KEY EXISTS:", !!process.env.OPTIMAPAY_PUBLIC_KEY);
+    console.log("SECRET EXISTS:", !!process.env.OPTIMAPAY_SECRET_KEY);
+
     const response = await fetch(
       `${process.env.OPTIMAPAY_BASE_URL}/collecto/initiate`,
       {
@@ -36,7 +39,7 @@ app.post("/api/pay", async (req, res) => {
         headers: {
           "Content-Type": "application/json",
           "Accept": "application/json",
-          "X-API-KEY": process.env.OPTIMAPAY_API_KEY,
+          "X-API-KEY": process.env.OPTIMAPAY_PUBLIC_KEY,
           "X-API-SECRET": process.env.OPTIMAPAY_SECRET_KEY
         },
         body: JSON.stringify({
@@ -79,10 +82,11 @@ app.post("/api/pay", async (req, res) => {
 
   } catch (err) {
     console.error("PAY ERROR:", err);
+    console.error("CAUSE:", err.cause);
 
     res.status(500).json({
       success: false,
-      message: err.message
+      message: err.cause?.message || err.message
     });
   }
 });
