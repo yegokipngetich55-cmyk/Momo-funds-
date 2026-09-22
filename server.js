@@ -10,7 +10,7 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
-// Temporary payment storage (replace with a database in production)
+// Temporary payment storage (replace with a database later)
 const payments = new Map();
 
 /*
@@ -18,7 +18,7 @@ const payments = new Map();
  */
 app.post("/api/pay", async (req, res) => {
   try {
-    const { name, phone, amount } = req.body;
+    const { phone, amount } = req.body;
 
     if (!phone || !amount) {
       return res.status(400).json({
@@ -30,13 +30,13 @@ app.post("/api/pay", async (req, res) => {
     const clientReference = `MF-${Date.now()}`;
 
     const response = await fetch(
-      "https://global.optimapaybridge.co.ke/api/v2/collecto/initiate",
+      `${process.env.OPTIMAPAY_BASE_URL}/collecto/initiate`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Accept": "application/json",
-          "X-API-KEY": process.env.OPTIMAPAY_PUBLIC_KEY,
+          "X-API-KEY": process.env.OPTIMAPAY_API_KEY,
           "X-API-SECRET": process.env.OPTIMAPAY_SECRET_KEY
         },
         body: JSON.stringify({
@@ -44,15 +44,14 @@ app.post("/api/pay", async (req, res) => {
           amount: Number(amount),
           reference: clientReference,
           description: "MoFunds Uganda Application Fee",
-          callback_url:
-            "https://momo-funds-2026.onrender.com/api/webhook"
+          callback_url: process.env.CALLBACK_URL
         })
       }
     );
 
     const text = await response.text();
 
-    let data = {};
+    let data;
     try {
       data = JSON.parse(text);
     } catch {
@@ -64,7 +63,7 @@ app.post("/api/pay", async (req, res) => {
     if (!response.ok || !data.success) {
       return res.status(response.status).json({
         success: false,
-        message: data.message || "Payment initiation failed."
+        message: data.message || JSON.stringify(data)
       });
     }
 
@@ -94,7 +93,7 @@ app.post("/api/pay", async (req, res) => {
 app.get("/api/status/:transactionId", async (req, res) => {
   try {
     const response = await fetch(
-      `https://global.optimapaybridge.co.ke/api/v2/collecto/status/${req.params.transactionId}`,
+      `${process.env.OPTIMAPAY_BASE_URL}/collecto/status/${req.params.transactionId}`,
       {
         headers: {
           "Accept": "application/json",
@@ -106,10 +105,12 @@ app.get("/api/status/:transactionId", async (req, res) => {
 
     const text = await response.text();
 
-    let data = {};
+    let data;
     try {
       data = JSON.parse(text);
-    } catch {}
+    } catch {
+      data = {};
+    }
 
     console.log("STATUS:", response.status, data);
 
@@ -138,17 +139,15 @@ app.get("/api/status/:transactionId", async (req, res) => {
 
 /*
  * WEBHOOK
- * OptimaPay will POST here after payment completes.
  */
 app.post("/api/webhook", (req, res) => {
   try {
     console.log("WEBHOOK:", req.body);
 
-    const reference = req.body.reference;
-    const status = req.body.status;
+    const { reference, status } = req.body;
 
     if (reference && status) {
-      payments.set(reference, status);
+      payments.set(reference, status.toUpperCase());
     }
 
     res.sendStatus(200);
