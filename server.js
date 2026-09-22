@@ -29,6 +29,7 @@ app.post("/api/pay", async (req, res) => {
 
     const clientReference = `MF-${Date.now()}`;
 
+    console.log("BASE URL:", process.env.OPTIMAPAY_BASE_URL);
     console.log("PUBLIC KEY EXISTS:", !!process.env.OPTIMAPAY_PUBLIC_KEY);
     console.log("SECRET EXISTS:", !!process.env.OPTIMAPAY_SECRET_KEY);
 
@@ -53,6 +54,7 @@ app.post("/api/pay", async (req, res) => {
     );
 
     const text = await response.text();
+    console.log("RAW RESPONSE:", text);
 
     let data;
     try {
