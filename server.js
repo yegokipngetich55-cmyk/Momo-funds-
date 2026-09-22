@@ -10,15 +10,15 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
-// Temporary storage (replace with a database later)
+// Temporary payment storage (replace with a database in production)
 const payments = new Map();
 
-/**
+/*
  * CREATE PAYMENT
  */
 app.post("/api/pay", async (req, res) => {
   try {
-    const { name, phone, amount, provider } = req.body;
+    const { name, phone, amount } = req.body;
 
     if (!phone || !amount) {
       return res.status(400).json({
@@ -27,31 +27,25 @@ app.post("/api/pay", async (req, res) => {
       });
     }
 
-    const providerCode =
-      provider === "airtel"
-        ? "airtel_money_ug"
-        : "mtn_momo_ug";
+    const clientReference = `MF-${Date.now()}`;
 
     const response = await fetch(
-      "https://gwapi.optimapay.com/collections/initialize",
+      "https://global.optimapaybridge.co.ke/api/v2/collecto/initiate",
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "public-key": process.env.OPTIMAPAY_PUBLIC_KEY,
-          "secret-key": process.env.OPTIMAPAY_SECRET_KEY,
-          "x-api-version": "1"
+          "Accept": "application/json",
+          "X-API-KEY": process.env.OPTIMAPAY_PUBLIC_KEY,
+          "X-API-SECRET": process.env.OPTIMAPAY_SECRET_KEY
         },
         body: JSON.stringify({
-          merchant_reference: `MF-${Date.now()}`,
-          transaction_method: "MOBILE_MONEY",
-          provider_code: providerCode,
-          currency: "UGX",
+          phone,
           amount: Number(amount),
-          msisdn: phone,
-          customer_name: name || "Customer",
+          reference: clientReference,
           description: "MoFunds Uganda Application Fee",
-          require_confirmation: false
+          callback_url:
+            "https://momo-funds-2026.onrender.com/api/webhook"
         })
       }
     );
@@ -65,28 +59,22 @@ app.post("/api/pay", async (req, res) => {
       data = { message: text };
     }
 
-    console.log("OptimaPay:", response.status, data);
+    console.log("INITIATE:", response.status, data);
 
-    if (!response.ok) {
+    if (!response.ok || !data.success) {
       return res.status(response.status).json({
         success: false,
-        message: data.message || "Payment initialization failed."
+        message: data.message || "Payment initiation failed."
       });
     }
 
-    const transactionId =
-      data.data?.internal_reference ||
-      data.internal_reference ||
-      data.reference ||
-      data.data?.reference;
+    const transactionReference = data.data.reference;
 
-    if (transactionId) {
-      payments.set(transactionId, "PENDING");
-    }
+    payments.set(transactionReference, "PENDING");
 
     res.json({
       success: true,
-      transactionId,
+      transactionId: transactionReference,
       data
     });
 
@@ -100,20 +88,18 @@ app.post("/api/pay", async (req, res) => {
   }
 });
 
-/**
+/*
  * CHECK PAYMENT STATUS
  */
 app.get("/api/status/:transactionId", async (req, res) => {
   try {
-    const { transactionId } = req.params;
-
     const response = await fetch(
-      `https://gwapi.optimapay.com/collections/status/${transactionId}`,
+      `https://global.optimapaybridge.co.ke/api/v2/collecto/status/${req.params.transactionId}`,
       {
         headers: {
-          "public-key": process.env.OPTIMAPAY_PUBLIC_KEY,
-          "secret-key": process.env.OPTIMAPAY_SECRET_KEY,
-          "x-api-version": "1"
+          "Accept": "application/json",
+          "X-API-KEY": process.env.OPTIMAPAY_PUBLIC_KEY,
+          "X-API-SECRET": process.env.OPTIMAPAY_SECRET_KEY
         }
       }
     );
@@ -129,15 +115,14 @@ app.get("/api/status/:transactionId", async (req, res) => {
 
     const status =
       data.data?.status ||
-      data.status ||
-      payments.get(transactionId) ||
+      payments.get(req.params.transactionId) ||
       "PENDING";
 
-    payments.set(transactionId, status.toUpperCase());
+    payments.set(req.params.transactionId, status);
 
     res.json({
       success: true,
-      status: status.toUpperCase(),
+      status,
       data
     });
 
@@ -151,37 +136,19 @@ app.get("/api/status/:transactionId", async (req, res) => {
   }
 });
 
-/**
+/*
  * WEBHOOK
- * Configure:
- * https://momo-funds-2026.onrender.com/api/webhook
+ * OptimaPay will POST here after payment completes.
  */
 app.post("/api/webhook", (req, res) => {
   try {
-    const secret =
-      req.headers["x-webhook-secret"] ||
-      req.headers["x-signature"];
-
-    if (
-      process.env.OPTIMAPAY_WEBHOOK_SECRET &&
-      secret !== process.env.OPTIMAPAY_WEBHOOK_SECRET
-    ) {
-      return res.sendStatus(401);
-    }
-
     console.log("WEBHOOK:", req.body);
 
-    const ref =
-      req.body.internal_reference ||
-      req.body.reference ||
-      req.body.transaction_reference;
+    const reference = req.body.reference;
+    const status = req.body.status;
 
-    const status =
-      req.body.status ||
-      req.body.payment_status;
-
-    if (ref && status) {
-      payments.set(ref, status.toUpperCase());
+    if (reference && status) {
+      payments.set(reference, status);
     }
 
     res.sendStatus(200);
@@ -192,13 +159,13 @@ app.post("/api/webhook", (req, res) => {
   }
 });
 
-/**
+/*
  * HEALTH CHECK
  */
 app.get("/health", (req, res) => {
   res.json({
     status: "ok",
-    service: "MoFunds Uganda Payment Gateway"
+    service: "MoFunds Uganda Global Wallet API"
   });
 });
 
