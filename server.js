@@ -98,7 +98,7 @@ app.get("/api/status/:transactionId", async (req, res) => {
       {
         headers: {
           "Accept": "application/json",
-          "X-API-KEY": process.env.OPTIMAPAY_PUBLIC_KEY,
+          "X-API-KEY": process.env.OPTIMAPAY_API_KEY,
           "X-API-SECRET": process.env.OPTIMAPAY_SECRET_KEY
         }
       }
