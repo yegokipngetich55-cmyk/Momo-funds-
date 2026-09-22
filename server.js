@@ -10,12 +10,15 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
-// Temporary in-memory store (replace with a database in production)
+// Temporary storage (replace with a database later)
 const payments = new Map();
 
+/**
+ * CREATE PAYMENT
+ */
 app.post("/api/pay", async (req, res) => {
   try {
-    const { name, phone, amount } = req.body;
+    const { name, phone, amount, provider } = req.body;
 
     if (!phone || !amount) {
       return res.status(400).json({
@@ -23,6 +26,11 @@ app.post("/api/pay", async (req, res) => {
         message: "Phone and amount are required."
       });
     }
+
+    const providerCode =
+      provider === "airtel"
+        ? "airtel_money_ug"
+        : "mtn_momo_ug";
 
     const response = await fetch(
       "https://gwapi.optimapay.com/collections/initialize",
@@ -37,9 +45,9 @@ app.post("/api/pay", async (req, res) => {
         body: JSON.stringify({
           merchant_reference: `MF-${Date.now()}`,
           transaction_method: "MOBILE_MONEY",
-          provider_code: "mtn_momo_ug",
+          provider_code: providerCode,
           currency: "UGX",
-          amount,
+          amount: Number(amount),
           msisdn: phone,
           customer_name: name || "Customer",
           description: "MoFunds Uganda Application Fee",
@@ -53,21 +61,24 @@ app.post("/api/pay", async (req, res) => {
     let data = {};
     try {
       data = JSON.parse(text);
-    } catch {}
+    } catch {
+      data = { message: text };
+    }
 
-    console.log("OptimaPay:", response.status, data || text);
+    console.log("OptimaPay:", response.status, data);
 
     if (!response.ok) {
       return res.status(response.status).json({
         success: false,
-        message: data.message || text
+        message: data.message || "Payment initialization failed."
       });
     }
 
     const transactionId =
       data.data?.internal_reference ||
       data.internal_reference ||
-      data.reference;
+      data.reference ||
+      data.data?.reference;
 
     if (transactionId) {
       payments.set(transactionId, "PENDING");
@@ -89,21 +100,75 @@ app.post("/api/pay", async (req, res) => {
   }
 });
 
-// Frontend polls this endpoint
+/**
+ * CHECK PAYMENT STATUS
+ */
 app.get("/api/status/:transactionId", async (req, res) => {
-  const { transactionId } = req.params;
+  try {
+    const { transactionId } = req.params;
 
-  const status = payments.get(transactionId) || "PENDING";
+    const response = await fetch(
+      `https://gwapi.optimapay.com/collections/status/${transactionId}`,
+      {
+        headers: {
+          "public-key": process.env.OPTIMAPAY_PUBLIC_KEY,
+          "secret-key": process.env.OPTIMAPAY_SECRET_KEY,
+          "x-api-version": "1"
+        }
+      }
+    );
 
-  res.json({
-    success: true,
-    status
-  });
+    const text = await response.text();
+
+    let data = {};
+    try {
+      data = JSON.parse(text);
+    } catch {}
+
+    console.log("STATUS:", response.status, data);
+
+    const status =
+      data.data?.status ||
+      data.status ||
+      payments.get(transactionId) ||
+      "PENDING";
+
+    payments.set(transactionId, status.toUpperCase());
+
+    res.json({
+      success: true,
+      status: status.toUpperCase(),
+      data
+    });
+
+  } catch (err) {
+    console.error("STATUS ERROR:", err);
+
+    res.status(500).json({
+      success: false,
+      message: err.message
+    });
+  }
 });
 
-// Webhook (configure this URL in OptimaPay if supported)
+/**
+ * WEBHOOK
+ * Configure:
+ * https://momo-funds-2026.onrender.com/api/webhook
+ */
 app.post("/api/webhook", (req, res) => {
   try {
+    const secret =
+      req.headers["x-webhook-secret"] ||
+      req.headers["x-signature"];
+
+    if (
+      process.env.OPTIMAPAY_WEBHOOK_SECRET &&
+      secret !== process.env.OPTIMAPAY_WEBHOOK_SECRET
+    ) {
+      return res.sendStatus(401);
+    }
+
     console.log("WEBHOOK:", req.body);
 
     const ref =
@@ -125,6 +190,16 @@ app.post("/api/webhook", (req, res) => {
     console.error("WEBHOOK ERROR:", err);
     res.sendStatus(500);
   }
+});
+
+/**
+ * HEALTH CHECK
+ */
+app.get("/health", (req, res) => {
+  res.json({
+    status: "ok",
+    service: "MoFunds Uganda Payment Gateway"
+  });
 });
 
 const PORT = process.env.PORT || 3000;
