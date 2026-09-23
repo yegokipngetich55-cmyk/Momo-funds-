@@ -367,7 +367,7 @@ currentTransaction=transactionId;
 localStorage.setItem("currentTransaction",transactionId);
 
 setLoading(true,"Waiting...");
-setMessage(`Payment request sent to ${phone}. Enter your Mobile Money PIN.`);
+setMessage("Payment request received. Please check your MTN or Airtel phone for the Mobile Money PIN prompt. Do not close this page while we confirm your payment.");
 
 await checkPayment(transactionId);
 
