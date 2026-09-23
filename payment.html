@@ -393,7 +393,7 @@ const status=String(payment.status||result.status||"").toUpperCase();
 
 if(status==="PENDING"){
 setLoading(true,"Waiting...");
-setMessage(`Payment request sent to ${phoneEl.value}. Waiting for MTN confirmation...`);
+setMessage("Payment request received. Please check your MTN or Airtel phone for the Mobile Money PIN prompt. Do not close this page while we confirm your payment.");
 }
 
 if(["SUCCESS","SUCCESSFUL","COMPLETED"].includes(status)){
